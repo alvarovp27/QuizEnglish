@@ -41,6 +41,18 @@ category#android.intent.category.LAUNCHER
 ADDED from AndroidManifest.xml:16:17
 	android:name
 		ADDED from AndroidManifest.xml:16:27
+activity#com.quizenglishb1.com.quizenglishb1.utilities.Play
+ADDED from AndroidManifest.xml:19:9
+	android:label
+		ADDED from AndroidManifest.xml:21:13
+	android:name
+		ADDED from AndroidManifest.xml:20:13
+activity#com.quizenglishb1.Play
+ADDED from AndroidManifest.xml:23:9
+	android:label
+		ADDED from AndroidManifest.xml:25:13
+	android:name
+		ADDED from AndroidManifest.xml:24:13
 uses-sdk
 INJECTED from AndroidManifest.xml:0:0 reason: use-sdk injection requested
 MERGED from com.android.support:appcompat-v7:22.2.0:20:5

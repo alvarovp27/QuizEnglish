@@ -5,40 +5,31 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
 
-import java.util.Map;
+public class Play extends ActionBarActivity {
 
-
-public class MainActivity extends ActionBarActivity {
-
-    private TextView welcome;
-    private Button play;
+    private Button sendWord;
+    private EditText wordSpanish;
+    private TextView wordEnglish;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_play);
 
-        welcome = (TextView) findViewById(R.id.welcome);
-
-        /*final WordsDB myDB = new WordsDB(this);
-
-        Map<String,String> map = myDB.translateFromEnglish("get");
-
-        welcome.setText(map.toString());*/
-
-
-
-
+        wordEnglish = (TextView) findViewById(R.id.englishWord);
+        wordSpanish = (EditText) findViewById(R.id.introduceSpanish);
+        sendWord = (Button) findViewById(R.id.sendWord);
+        
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_play, menu);
         return true;
     }
 
