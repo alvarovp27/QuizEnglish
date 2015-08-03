@@ -17,10 +17,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".com.quizenglishb1.utilities.Play"
-            android:label="@string/title_activity_play" >
-        </activity>
-        <activity
             android:name=".Play"
             android:label="@string/title_activity_play" >
         </activity>

@@ -1,9 +1,12 @@
 package com.quizenglishb1;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -29,6 +32,16 @@ public class MainActivity extends ActionBarActivity {
         Map<String,String> map = myDB.translateFromEnglish("get");
 
         welcome.setText(map.toString());*/
+        play = (Button) findViewById(R.id.playButton);
+        final Context contexto = this;
+        play.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent i = new Intent(contexto, Play.class);
+                startActivity(i);
+            }
+        });
 
 
 

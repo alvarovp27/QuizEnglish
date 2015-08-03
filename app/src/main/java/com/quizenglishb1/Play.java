@@ -2,11 +2,14 @@ package com.quizenglishb1;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import java.util.List;
 
 
 public class Play extends ActionBarActivity {
@@ -14,6 +17,8 @@ public class Play extends ActionBarActivity {
     private Button sendWord;
     private EditText wordSpanish;
     private TextView wordEnglish;
+    private TextView listWords;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,8 +28,26 @@ public class Play extends ActionBarActivity {
         wordEnglish = (TextView) findViewById(R.id.englishWord);
         wordSpanish = (EditText) findViewById(R.id.introduceSpanish);
         sendWord = (Button) findViewById(R.id.sendWord);
+
+        listWords = (TextView) findViewById(R.id.allWords);
+        listWords.setMovementMethod(new ScrollingMovementMethod());
+
+        final WordsDB db = new WordsDB(this);
+
+        List<String[]> allWords = db.getAll();
+        for(String[] s:allWords){
+            String line = s[0]+" ("+s[1]+") - "+s[2]+" ("+s[3]+")\n";
+            listWords.append(line);
+        }
+
+
+
+    }
+
+    private void loadQuestions(){
         
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

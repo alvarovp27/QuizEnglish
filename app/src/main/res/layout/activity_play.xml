@@ -15,7 +15,8 @@
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp">
+        android:layout_marginTop="50dp"
+        android:id="@+id/interactUser">
 
         <EditText
             android:layout_width="100dp"
@@ -30,6 +31,22 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/interactUser">
+
+        <TextView
+            android:text="holaala"
+            android:id="@+id/allWords"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scrollbars = "vertical"  />
+            <!-- android:maxLines = "" -->
+
 
     </RelativeLayout>
 
