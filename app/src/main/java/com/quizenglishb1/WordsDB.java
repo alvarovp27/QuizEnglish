@@ -41,6 +41,8 @@ public class WordsDB extends SQLiteOpenHelper{
         db.execSQL("INSERT INTO WORDTRANSLATIONS VALUES('surgir','v','arise','v')");
         db.execSQL("INSERT INTO WORDTRANSLATIONS VALUES('despertar','v','wake up','v')");
         db.execSQL("INSERT INTO WORDTRANSLATIONS VALUES('dormir','v','sleep','v')");*/
+
+        System.out.println("*******ESTOY INICIALIZANDO LA BD*********");
         db.execSQL("INSERT INTO WORDTRANSLATIONS VALUES('tener en cuenta','phrv','allow for','phrv')");
         db.execSQL("INSERT INTO WORDTRANSLATIONS VALUES('prever','phrv','allow for','phrv')");
         db.execSQL("INSERT INTO WORDTRANSLATIONS VALUES(' replicar','phrv','answer back','phrv')");
@@ -615,7 +617,7 @@ public class WordsDB extends SQLiteOpenHelper{
         db.execSQL("INSERT INTO WORDTRANSLATIONS VALUES('agotar','phrv','work out','phrv')");
         db.execSQL("INSERT INTO WORDTRANSLATIONS VALUES('desarrollar','phrv','work up','phrv')");
         db.execSQL("INSERT INTO WORDTRANSLATIONS VALUES('fomentar','phrv','work up','phrv')");
-
+        System.out.println("*******TERMINÉ DE AÑADIR TUPLAS*********");
     }
 
     @Override
@@ -681,13 +683,14 @@ public class WordsDB extends SQLiteOpenHelper{
      * y devuelve un Map que representa todas las palabras que coinciden
      * con dicha traducción
      * */
-    public Map<String,String> translateFromEnglish(String english){
-        Map<String,String> res = new HashMap<>();
+    public List<String> translateFromEnglish(String english){
+        List<String> res = new ArrayList<>();
+        res.add(english);
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM WORDTRANSLATIONS " +
-                "WHERE wordEN='"+english+"'",null);
+                "WHERE wordEN='" + english + "'", null);
         while(cursor.moveToNext())
-            res.put(cursor.getString(0),cursor.getString(1));
+            res.add(cursor.getString(0));
         cursor.close();
         db.close();
         return res;
@@ -697,11 +700,27 @@ public class WordsDB extends SQLiteOpenHelper{
         List<String[]> res = new ArrayList<>();
 
         SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM WORDTRANSLATIONS",null);
+        Cursor cursor = db.rawQuery("SELECT * FROM WORDTRANSLATIONS", null);
         while(cursor.moveToNext()){
             String aux[] = {cursor.getString(0),cursor.getString(1),cursor.getString(2),cursor.getString(3)};
             res.add(aux);
         }
+        cursor.close();
+        db.close();
+        return res;
+    }
+
+    public List<List<String>> getAllClasified(){
+        List<List<String>> res = new ArrayList<>();
+        List<String> showed = new ArrayList<>();
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM WORDTRANSLATIONS",null);
+
+        while(cursor.moveToNext())
+            if(!showed.contains(cursor.getString(2)))
+                res.add(translateFromEnglish(cursor.getString(2)));
+
+
         cursor.close();
         db.close();
         return res;
