@@ -1,63 +1,61 @@
 package com.quizenglishb1;
 
-import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
+import com.quizenglishb1.com.quizenglishb1.utilities.Answer;
 
-import java.util.Map;
+import java.util.List;
 
 
-public class MainActivity extends ActionBarActivity {
+public class Result extends ActionBarActivity {
 
-    private TextView welcome;
-    private Button play;
+    private TextView results;
+    private TextView mark;
+    private ListView summary;
+    private Button home;
+
+    private List<Answer> answers;
+
+    private Context context = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_result);
 
-        welcome = (TextView) findViewById(R.id.welcome);
+        home = (Button) findViewById(R.id.home_button);
+        results = (TextView) findViewById(R.id.results_text);
+        mark = (TextView) findViewById(R.id.mark_text);
+        summary = (ListView) findViewById(R.id.summary_list);
 
-        /*final WordsDB myDB = new WordsDB(this);
+        System.out.println("********** "+getIntent().getStringExtra("a"));
+        answers = (List<Answer>) getIntent().getSerializableExtra("answers");
 
-        Map<String,String> map = myDB.translateFromEnglish("get");
+        results.setText(answers.toString());
 
-        welcome.setText(map.toString());*/
-        play = (Button) findViewById(R.id.playButton);
-        final Context contexto = this;
-
-        setTitle("English Quizz");
-        //getActionBar().setBackgroundDrawable(new ColorDrawable());
-
-        play.setOnClickListener(new View.OnClickListener() {
+        home.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                Intent i = new Intent(contexto, Play.class);
+                Intent i = new Intent(context, MainActivity.class);
                 startActivity(i);
             }
         });
-
-
-
 
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_result, menu);
         return true;
     }
 

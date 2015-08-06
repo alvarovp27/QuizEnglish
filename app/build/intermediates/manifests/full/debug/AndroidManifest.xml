@@ -26,6 +26,10 @@
             android:name="com.quizenglishb1.Play"
             android:label="@string/title_activity_play" >
         </activity>
+        <activity
+            android:name="com.quizenglishb1.Result"
+            android:label="@string/title_activity_result" >
+        </activity>
     </application>
 
 </manifest>

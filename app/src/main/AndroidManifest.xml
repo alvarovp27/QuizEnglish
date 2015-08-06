@@ -20,6 +20,10 @@
             android:name=".Play"
             android:label="@string/title_activity_play" >
         </activity>
+        <activity
+            android:name=".Result"
+            android:label="@string/title_activity_result" >
+        </activity>
     </application>
 
 </manifest>

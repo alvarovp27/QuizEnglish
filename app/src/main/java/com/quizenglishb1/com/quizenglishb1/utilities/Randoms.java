@@ -9,10 +9,10 @@ public class Randoms {
 
 
     /**
-     * Próximos métodos:
-     * - Generar un double aleatorio entre 0 y un límite superior con una presición dada
-     * - Generar un int entre un límite inferior dado y otro superior
-     * - Generar también números negativos
+     * PrÃ³ximos mÃ©todos:
+     * - Generar un double aleatorio entre 0 y un lÃ­mite superior con una presiciÃ³n dada
+     * - Generar un int entre un lÃ­mite inferior dado y otro superior
+     * - Generar tambiÃ©n nÃºmeros negativos
      *
      * */
 

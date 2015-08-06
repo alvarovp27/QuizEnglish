@@ -1,0 +1,52 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context="com.quizenglishb1.Result">
+
+    <TextView
+        android:id="@+id/results_text"
+        android:text="results"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/mark_text"
+        android:text="Mark: "
+        android:layout_marginLeft="50px"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/results_text"/>
+
+    <TextView
+        android:id="@+id/info_result_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/mark_text"
+        android:layout_margin="50px"
+        android:text="Answer summary: "/>
+
+    <ListView
+        android:id="@+id/summary_list"
+        android:layout_width="wrap_content"
+        android:layout_height="300dp"
+        android:layout_below="@id/info_result_text">
+
+
+
+    </ListView>
+
+
+    <Button
+        android:id="@+id/home_button"
+        android:text="Home"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="400dp"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/buttonshape"/>
+
+</RelativeLayout>

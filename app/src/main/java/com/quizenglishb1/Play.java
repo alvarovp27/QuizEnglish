@@ -12,8 +12,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.quizenglishb1.com.quizenglishb1.utilities.Answer;
 import com.quizenglishb1.com.quizenglishb1.utilities.Randoms;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +32,10 @@ public class Play extends ActionBarActivity {
 
     private int wordCount = 0;
     private List<List<String>> questions = new ArrayList<>();
+
+    private List<Answer> answers= new ArrayList<>();
+    private int right = 0;
+    private int wrong = 0;
 
     private Context context = this;
 
@@ -50,21 +56,46 @@ public class Play extends ActionBarActivity {
 
         loadQuestions();
 
-        wordEnglish.setText(questions.get(wordCount).get(0));
+        wordEnglish.setText(questions.get(wordCount).get(wordCount));
         sendWord.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(questions.get(wordCount).contains(wordSpanish.getText().toString()))
+
+                List<String> englishWords = new ArrayList<String>();
+                for(int i=1; i<questions.get(wordCount).size();i++)
+                    englishWords.add(questions.get(wordCount).get(i));
+
+                answers.add(new Answer(questions.get(wordCount).get(0),wordSpanish.getText().toString(),englishWords));
+
+                if(questions.get(wordCount).contains(wordSpanish.getText().toString())){
                     isCorrect.setText("OK!");
-                else
-                    isCorrect.setText("Wrong");
+                    right++;
+                }else{
+                    isCorrect.setText("Wrong\nThe correct answer for "+questions.get(wordCount).get(0));
+                    if(questions.get(wordCount).size()>2)
+                        isCorrect.append(" are");
+                    else
+                        isCorrect.append(" is");
 
+                    for(int i = 1;i<questions.get(wordCount).size();i++)
+                        if(i==questions.get(wordCount).size()-1)
+                            isCorrect.append(" "+questions.get(wordCount).get(i)+".");
+                          else
+                            isCorrect.append(" "+questions.get(wordCount).get(i)+",");
+                    wrong++;
+                }
 
+                //Pasa a la siguiente pregunta
                 if(wordCount!=9){
                     wordCount++;
                     wordEnglish.setText(questions.get(wordCount).get(0));
+                    wordSpanish.setText("");
                 } else {
-                    Intent i = new Intent(context,MainActivity.class);
+                    Intent i = new Intent(context,Result.class);
+                    Bundle b = new Bundle();
+                    //b.putExtra("answers",answers);
+                    i.putExtra("answers", (Serializable) answers);
+                    i.putExtra("a","hola");
                     startActivity(i);
                 }
 
