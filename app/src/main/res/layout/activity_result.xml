@@ -35,6 +35,7 @@
         android:layout_height="300dp"
         android:layout_below="@id/info_result_text">
 
+        <!-- Lo que haya aquí se visualizará cuando no haya elementos en la lista -->
 
 
     </ListView>

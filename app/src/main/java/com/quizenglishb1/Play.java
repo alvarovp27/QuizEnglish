@@ -36,6 +36,7 @@ public class Play extends ActionBarActivity {
     private List<Answer> answers= new ArrayList<>();
     private int right = 0;
     private int wrong = 0;
+    private int total = 10;
 
     private Context context = this;
 
@@ -86,16 +87,17 @@ public class Play extends ActionBarActivity {
                 }
 
                 //Pasa a la siguiente pregunta
-                if(wordCount!=9){
+                if(wordCount!=total-1){
                     wordCount++;
                     wordEnglish.setText(questions.get(wordCount).get(0));
                     wordSpanish.setText("");
                 } else {
                     Intent i = new Intent(context,Result.class);
-                    Bundle b = new Bundle();
                     //b.putExtra("answers",answers);
                     i.putExtra("answers", (Serializable) answers);
-                    i.putExtra("a","hola");
+                    i.putExtra("right",right);
+                    i.putExtra("wrong",wrong);
+                    i.putExtra("total",total);
                     startActivity(i);
                 }
 

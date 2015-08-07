@@ -42,6 +42,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/list"
             android:layout_centerHorizontal="true"
+            android:drawableRight="@drawable/ic_list"
             android:layout_below="@id/playButton"
             android:background="@drawable/buttonshape"
             android:layout_margin="15px"/>
@@ -52,6 +53,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/tools"
             android:layout_centerHorizontal="true"
+            android:drawableRight="@drawable/ic_tools"
             android:layout_below="@id/list"
             android:background="@drawable/buttonshape"
             android:layout_margin="15px"/>

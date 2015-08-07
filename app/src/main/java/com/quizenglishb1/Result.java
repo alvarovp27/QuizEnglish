@@ -24,6 +24,11 @@ public class Result extends ActionBarActivity {
     private Button home;
 
     private List<Answer> answers;
+    private Integer right;
+    private Integer wrong;
+    private Integer total;
+
+
 
     private Context context = this;
 
@@ -37,10 +42,17 @@ public class Result extends ActionBarActivity {
         mark = (TextView) findViewById(R.id.mark_text);
         summary = (ListView) findViewById(R.id.summary_list);
 
-        System.out.println("********** "+getIntent().getStringExtra("a"));
         answers = (List<Answer>) getIntent().getSerializableExtra("answers");
+        right = getIntent().getIntExtra("right",0);
+        wrong = getIntent().getIntExtra("wrong",0);
+        total = getIntent().getIntExtra("total",100);
 
-        results.setText(answers.toString());
+        results.setText("You have " + right + " questions right of " + total);
+        double markDouble = (new Double(right)*10.0)/(new Double(total));
+        mark.append(""+markDouble);
+
+        /*Se le pasa un adaptador al ListView*/
+        this.summary.setAdapter(new AnswerAdapter(context, answers));
 
         home.setOnClickListener(new View.OnClickListener() {
             @Override

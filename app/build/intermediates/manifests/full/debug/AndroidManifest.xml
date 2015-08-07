@@ -30,6 +30,14 @@
             android:name="com.quizenglishb1.Result"
             android:label="@string/title_activity_result" >
         </activity>
+        <activity
+            android:name="com.quizenglishb1.WordList"
+            android:label="@string/title_activity_word_list" >
+        </activity>
+        <activity
+            android:name="com.quizenglishb1.SummaryList"
+            android:label="@string/title_activity_summary_list" >
+        </activity>
     </application>
 
 </manifest>

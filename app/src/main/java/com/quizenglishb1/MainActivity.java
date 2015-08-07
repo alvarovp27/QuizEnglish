@@ -21,13 +21,20 @@ public class MainActivity extends ActionBarActivity {
 
     private TextView welcome;
     private Button play;
+    private Button list;
+    private Button tools;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        final WordsDB db = new WordsDB(this);
+        db.close();
+
         welcome = (TextView) findViewById(R.id.welcome);
+        list = (Button) findViewById(R.id.list);
+        tools = (Button) findViewById(R.id.tools);
 
         /*final WordsDB myDB = new WordsDB(this);
 
@@ -49,9 +56,13 @@ public class MainActivity extends ActionBarActivity {
             }
         });
 
-
-
-
+        list.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(contexto, WordList.class);
+                startActivity(i);
+            }
+        });
     }
 
     @Override

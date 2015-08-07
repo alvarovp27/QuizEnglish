@@ -24,6 +24,14 @@
             android:name=".Result"
             android:label="@string/title_activity_result" >
         </activity>
+        <activity
+            android:name=".WordList"
+            android:label="@string/title_activity_word_list" >
+        </activity>
+        <activity
+            android:name=".SummaryList"
+            android:label="@string/title_activity_summary_list" >
+        </activity>
     </application>
 
 </manifest>
