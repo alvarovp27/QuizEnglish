@@ -51,7 +51,7 @@ public class AnswerAdapter extends BaseAdapter{
             rowView = inflater.inflate(R.layout.activity_summary_list, parent, false);
         }
 
-        //ImageView isRight = (ImageView) rowView.findViewById(R.id.itemIsRight);
+        ImageView isRight = (ImageView) rowView.findViewById(R.id.itemIsRight);
         TextView question = (TextView) rowView.findViewById(R.id.itemQuestion);
         TextView answered = (TextView) rowView.findViewById(R.id.itemAnswered);
 
@@ -59,6 +59,10 @@ public class AnswerAdapter extends BaseAdapter{
         question.setText(answer.getQuestion());
         answered.setText(answer.getRightAsnwers().toString());
 
+        if(!answer.isRight())
+            isRight.setImageResource(R.drawable.ic_wrong);
+        else
+            isRight.setImageResource(R.drawable.ic_right);
 
         return rowView;
     }

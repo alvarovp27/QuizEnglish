@@ -17,7 +17,7 @@ import java.util.Map;
  */
 public class WordsDB extends SQLiteOpenHelper{
 
-    private String createWORDTRANSLATIONTABLE = "CREATE TABLE IF NOT EXITS WORDTRANSLATIONS" +
+    private String createWORDTRANSLATIONTABLE = "CREATE TABLE IF NOT EXISTS WORDTRANSLATIONS" +
             "(wordSP TEXT," +
             "typeSP TEXT," +
             "wordEN TEXT," +
