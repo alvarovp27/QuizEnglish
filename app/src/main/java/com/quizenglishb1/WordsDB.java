@@ -23,6 +23,12 @@ public class WordsDB extends SQLiteOpenHelper{
             "wordEN TEXT," +
             "typeEN TEXT)";
 
+    private String createFAVOURITESEN = "CREATE TABLE IF NOT EXISTS FAVOURITESEN"+
+            "(wordEN TEXT)";
+
+    private String createFAVOURITESSP = "CREATE TABLE IF NOT EXISTS FAVOURITESSP"+
+            "(wordSP TEXT)";
+
     public WordsDB(Context context) {
         super(context, "DataBase", null, 1);
     }
@@ -31,6 +37,8 @@ public class WordsDB extends SQLiteOpenHelper{
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(createWORDTRANSLATIONTABLE);
+        db.execSQL(createFAVOURITESEN);
+        db.execSQL(createFAVOURITESSP);
         init(db);
     }
 

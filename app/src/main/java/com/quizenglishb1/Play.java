@@ -132,6 +132,8 @@ public class Play extends ActionBarActivity {
             int random = Randoms.randomInt(allClasified.size()-1);
             questions.add(allClasified.get(random));
         }
+
+        db.close();
     }
 
 
