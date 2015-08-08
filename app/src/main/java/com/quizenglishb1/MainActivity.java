@@ -51,7 +51,7 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
 
-                Intent i = new Intent(contexto, Play.class);
+                Intent i = new Intent(contexto, GameSettings.class);
                 startActivity(i);
             }
         });

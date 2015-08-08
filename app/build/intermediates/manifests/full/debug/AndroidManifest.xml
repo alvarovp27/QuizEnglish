@@ -38,6 +38,10 @@
             android:name="com.quizenglishb1.SummaryList"
             android:label="@string/title_activity_summary_list" >
         </activity>
+        <activity
+            android:name="com.quizenglishb1.GameSettings"
+            android:label="@string/title_activity_game_settings" >
+        </activity>
     </application>
 
 </manifest>

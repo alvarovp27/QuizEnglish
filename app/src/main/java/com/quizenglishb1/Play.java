@@ -15,6 +15,8 @@ import android.widget.TextView;
 import com.quizenglishb1.com.quizenglishb1.utilities.Answer;
 import com.quizenglishb1.com.quizenglishb1.utilities.Randoms;
 
+import org.w3c.dom.Text;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +31,7 @@ public class Play extends ActionBarActivity {
     private TextView wordEnglish;
     private TextView listWords;
     private TextView isCorrect;
+    private TextView count;
 
     private int wordCount = 0;
     private List<List<String>> questions = new ArrayList<>();
@@ -51,13 +54,19 @@ public class Play extends ActionBarActivity {
 
         isCorrect = (TextView) findViewById(R.id.isCorrect);
 
+        count = (TextView) findViewById(R.id.counter);
+
         listWords = (TextView) findViewById(R.id.allWords);
         listWords.setMovementMethod(new ScrollingMovementMethod());
 
+        total = getIntent().getIntExtra("nQuestions",10);
 
         loadQuestions();
 
         wordEnglish.setText(questions.get(wordCount).get(wordCount));
+
+        count.setText("Question 1 of "+total);
+
         sendWord.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -91,6 +100,7 @@ public class Play extends ActionBarActivity {
                     wordCount++;
                     wordEnglish.setText(questions.get(wordCount).get(0));
                     wordSpanish.setText("");
+                    count.setText("Question "+(wordCount+1)+" of "+total);
                 } else {
                     Intent i = new Intent(context,Result.class);
                     //b.putExtra("answers",answers);
@@ -118,7 +128,7 @@ public class Play extends ActionBarActivity {
 
         List<List<String>> allClasified = db.getAllClasified();
 
-        for(int i = 0;i<10;i++){
+        for(int i = 0;i<total;i++){
             int random = Randoms.randomInt(allClasified.size()-1);
             questions.add(allClasified.get(random));
         }

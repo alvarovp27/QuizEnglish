@@ -32,6 +32,10 @@
             android:name=".SummaryList"
             android:label="@string/title_activity_summary_list" >
         </activity>
+        <activity
+            android:name=".GameSettings"
+            android:label="@string/title_activity_game_settings" >
+        </activity>
     </application>
 
 </manifest>

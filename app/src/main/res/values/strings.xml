@@ -7,4 +7,5 @@
     <string name="title_activity_result">Result</string>
     <string name="title_activity_word_list">WordList</string>
     <string name="title_activity_summary_list">SummaryList</string>
+    <string name="title_activity_game_settings">GameSettings</string>
 </resources>
