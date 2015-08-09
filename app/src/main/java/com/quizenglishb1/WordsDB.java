@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.quizenglishb1.com.quizenglishb1.utilities.CoupleString;
+import com.quizenglishb1.com.quizenglishb1.utilities.Word;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -686,7 +687,7 @@ public class WordsDB extends SQLiteOpenHelper{
                 "WHERE wordSP="+spanish,null);
 
         while(cursor.moveToNext())
-            res.put(cursor.getString(2),cursor.getString(3));
+            res.put(cursor.getString(2), cursor.getString(3));
         cursor.close();
         db.close();
         return res;
@@ -724,6 +725,8 @@ public class WordsDB extends SQLiteOpenHelper{
         return res;
     }
 
+    /**Devuelve todas las palabras existentes en la BD organizadas de la siguiente manera:
+     * palabra en inglés - traducciones al español. */
     public List<List<String>> getAllClasified(){
         List<List<String>> res = new ArrayList<>();
         List<String> showed = new ArrayList<>();
@@ -737,6 +740,35 @@ public class WordsDB extends SQLiteOpenHelper{
 
         cursor.close();
         db.close();
+        return res;
+    }
+
+    /**Devuelve todas las palabras existentes, desde el inglés y sus traducciones al español.
+     * Están clasificadas según el tipo de palabra*/
+    public List<Word> getAllEnglishWords(){
+        List<Word> res = new ArrayList<>();
+
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM WORDTRANSLATIONS ORDER BY wordEN, typeEN ASC",null);
+
+        while(cursor.moveToNext()){
+            String english = cursor.getString(2);
+            String type = cursor.getString(3);
+
+            Word word = Word.create(english,type);
+
+            if(res.contains(word))
+                res.get(res.size()-1).addTranslation(Word.create(cursor.getString(0), cursor.getString(1)));
+            else{
+                word.addTranslation(Word.create(cursor.getString(0),cursor.getString(1)));
+                res.add(word);
+            }
+
+        }
+
+        cursor.close();
+        db.close();
+
         return res;
     }
 
