@@ -602,7 +602,6 @@ public class WordsDB extends SQLiteOpenHelper{
             db.execSQL("INSERT INTO WORDTRANSLATIONS VALUES('cambiar la posición','phrv','turn over','phrv')");
             db.execSQL("INSERT INTO WORDTRANSLATIONS VALUES('ceder','phrv','turn over','phrv')");
             db.execSQL("INSERT INTO WORDTRANSLATIONS VALUES('abrir','phrv','turn up','phrv')");
-            db.execSQL("INSERT INTO WORDTRANSLATIONS VALUES('abrir','phrv','turn up','phrv')");
             db.execSQL("INSERT INTO WORDTRANSLATIONS VALUES('llegar','phrv','turn up','phrv')");
             db.execSQL("INSERT INTO WORDTRANSLATIONS VALUES('aparecer','phrv','turn up','phrv')");
             db.execSQL("INSERT INTO WORDTRANSLATIONS VALUES('suceder','phrv','turn up','phrv')");
@@ -771,6 +770,32 @@ public class WordsDB extends SQLiteOpenHelper{
         return res;
     }
 
+    public List<Word> getWordFromEn(String word){
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM WORDTRANSLATIONS WHERE wordEN ='" + word + "' ORDER BY wordEN,typeEN ASC", null);
+
+        List<Word> res = new ArrayList<>();
+
+        while(cursor.moveToNext()){
+            String english = cursor.getString(2);
+            String type = cursor.getString(3);
+
+            Word wordW = Word.create(english,type);
+
+            if(res.contains(wordW))
+                res.get(res.size()-1).addTranslation(Word.create(cursor.getString(0), cursor.getString(1)));
+            else{
+                wordW.addTranslation(Word.create(cursor.getString(0), cursor.getString(1)));
+                res.add(wordW);
+            }
+        }
+
+        cursor.close();
+        db.close();
+
+        return res;
+    }
+
     /**
      * Añade a la base de datos la palabra que recibe como parámetro (spanish) y le
      * asocia las traducciones indicadas en el Map<String,String>
@@ -800,6 +825,39 @@ public class WordsDB extends SQLiteOpenHelper{
                             + spanish.get(s)+","
                             + english.getFirst()+","
                             + english.getSecond()+")");
+        db.close();
+    }
+
+
+    public List<Word> getAllFavouritesEn(){
+        //FAVOURITESEN
+
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM FAVOURITESEN ORDER BY wordEN ASC", null);
+
+        List<Word> res = new ArrayList<>();
+
+        while(cursor.moveToNext()){
+            List<Word> aux = getWordFromEn(cursor.getString(0));
+            for(Word w:aux)
+                res.add(w);
+        }
+
+        cursor.close();
+        db.close();
+
+        return res;
+    }
+
+    public void addFavouriteEn(String word){
+        SQLiteDatabase db = getWritableDatabase();
+        db.execSQL("INSERT INTO FAVOURITESEN VALUES('" + word + "')");
+        db.close();
+    }
+
+    public void removeFavouriteEn(String word){
+        SQLiteDatabase db = getWritableDatabase();
+        db.execSQL("DELETE FROM FAVOURITESEN WHERE wordEN = '"+word+"'");
         db.close();
     }
 }

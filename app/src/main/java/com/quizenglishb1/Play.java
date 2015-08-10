@@ -119,21 +119,13 @@ public class Play extends ActionBarActivity {
 
     private void loadQuestions(){
         final WordsDB db = new WordsDB(this);
-
-        List<String[]> allWords = db.getAll();
-        for(String[] s:allWords){
-            String line = s[0]+" ("+s[1]+") - "+s[2]+" ("+s[3]+")\n";
-            listWords.append(line);
-        }
-
         List<List<String>> allClasified = db.getAllClasified();
+        db.close();
 
         for(int i = 0;i<total;i++){
             int random = Randoms.randomInt(allClasified.size()-1);
             questions.add(allClasified.get(random));
         }
-
-        db.close();
     }
 
 

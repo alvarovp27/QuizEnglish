@@ -2,15 +2,19 @@ package com.quizenglishb1;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ListView;
 import android.widget.TabHost;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.quizenglishb1.com.quizenglishb1.utilities.ListTypes;
 import com.quizenglishb1.com.quizenglishb1.utilities.Word;
 
 import org.w3c.dom.Text;
@@ -33,57 +37,64 @@ public class WordList extends ActionBarActivity {
         TabHost tabs = (TabHost) findViewById(android.R.id.tabhost);
         tabs.setup();
 
-        TabHost.TabSpec spec = tabs.newTabSpec("mitab1");
+        TabHost.TabSpec spec1 = tabs.newTabSpec("mitab1");
 
         //Creo la tabla 1 y la añado al contenedor
-        spec.setContent(R.id.tab1);
-        spec.setIndicator("All");
-        tabs.addTab(spec);
+        spec1.setContent(R.id.tab1);
+        spec1.setIndicator("All");
+        tabs.addTab(spec1);
 
         //Contenido de la tabla 1
         final WordsDB db = new WordsDB(this);
         List<Word> allWords = db.getAllEnglishWords();
+        List<Word> favWords = db.getAllFavouritesEn();
         db.close();
 
         ListView listViewAllWords = (ListView) findViewById(R.id.list_view_all_words);
-        listViewAllWords.setAdapter(new WordListAdapter(context, allWords));
+        listViewAllWords.setAdapter(new WordListAdapter(context, allWords, favWords, ListTypes.ALL));
 
+        //Tabla 2
+        TabHost.TabSpec spec2 = tabs.newTabSpec("mitab2");
+        spec2.setContent(R.id.tab2);
+        spec2.setIndicator("", getResources().getDrawable(R.drawable.ic_fav_icon));
+        tabs.addTab(spec2);
 
+        ListView listViewFavWords = (ListView) findViewById(R.id.list_view_fav_words);
+        listViewFavWords.setAdapter(new WordListAdapter(context, allWords, favWords, ListTypes.FAVOURITES));
 
-        /*TextView textViewTab1 = (TextView) findViewById(R.id.text_view_tab1);
-        textViewTab1.setMovementMethod(new ScrollingMovementMethod());
+        //Tabla 3
+        TabHost.TabSpec spec3 = tabs.newTabSpec("mitab3");
+        spec3.setContent(R.id.tab3);
+        spec3.setIndicator("Learned");
+        tabs.addTab(spec3);
 
-        final WordsDB db = new WordsDB(this);
-        List<String[]> allWords = db.getAll();
-        db.close();
-
-        for(String[] s:allWords){
-            String line = s[0]+" ("+s[1]+") - "+s[2]+" ("+s[3]+")\n";
-            textViewTab1.append(line);
-        }*/
-
-
-
-        spec = tabs.newTabSpec("mitab2");
-        spec.setContent(R.id.tab2);
-        spec.setIndicator("Favourites");
-        tabs.addTab(spec);
-
-        spec = tabs.newTabSpec("mitab3");
-        spec.setContent(R.id.tab3);
-        spec.setIndicator("Learned");
-        tabs.addTab(spec);
-
-        spec = tabs.newTabSpec("mitab4");
-        spec.setContent(R.id.tab4);
-        spec.setIndicator("Worst");
-        tabs.addTab(spec);
+        //Tabla 4
+        TabHost.TabSpec spec4 = tabs.newTabSpec("mitab2");
+        spec4.setContent(R.id.tab4);
+        spec4.setIndicator("Worst");
+        tabs.addTab(spec4);
 
         tabs.setCurrentTab(0);
 
-
-
+        tabs.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
+            @Override
+            public void onTabChanged(String tabId) {
+                //Toast.makeText(getApplicationContext(), "Click on tab: " + tabId, Toast.LENGTH_SHORT).show();
+                final WordsDB db = new WordsDB(context);
+                List<Word> allWords = db.getAllEnglishWords();
+                List<Word> favWords = db.getAllFavouritesEn();
+                db.close();
+                if (tabId == "mitab1") {
+                    ListView listViewAllWords = (ListView) findViewById(R.id.list_view_all_words);
+                    listViewAllWords.setAdapter(new WordListAdapter(context, allWords, favWords, ListTypes.ALL));
+                } else if(tabId=="mitab2"){
+                    ListView listViewFavWords = (ListView) findViewById(R.id.list_view_fav_words);
+                    listViewFavWords.setAdapter(new WordListAdapter(context, allWords, favWords, ListTypes.FAVOURITES));
+                }
+            }
+        });
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

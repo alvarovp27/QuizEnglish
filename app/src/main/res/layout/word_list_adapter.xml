@@ -2,6 +2,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
+
     <TextView
         android:text="main_word"
         android:id="@+id/main_word"
@@ -32,5 +33,12 @@
         android:layout_below="@+id/translations_text_info"/>
 
 
+    <ImageButton
+        android:id="@+id/favourites_img_button"
+        android:src="@drawable/ic_non_fav"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="300dp"
+        android:layout_alignParentLeft="true" />
 
 </RelativeLayout>
