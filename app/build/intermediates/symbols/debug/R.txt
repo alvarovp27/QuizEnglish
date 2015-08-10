@@ -439,7 +439,7 @@ int id action_menu_presenter 0x7f0c0003
 int id action_mode_bar 0x7f0c003d
 int id action_mode_bar_stub 0x7f0c003c
 int id action_mode_close_button 0x7f0c0025
-int id action_settings 0x7f0c0086
+int id action_settings 0x7f0c0087
 int id activity_chooser_view_content 0x7f0c0026
 int id alertTitle 0x7f0c0030
 int id allWords 0x7f0c0063
@@ -470,6 +470,7 @@ int id english_to_spanish 0x7f0c0052
 int id expand_activities_button 0x7f0c0027
 int id expanded_menu 0x7f0c0037
 int id favourites_img_button 0x7f0c0085
+int id hits_and_fails 0x7f0c0086
 int id home 0x7f0c0004
 int id homeAsUp 0x7f0c000d
 int id home_button 0x7f0c0068
@@ -492,7 +493,9 @@ int id list 0x7f0c005a
 int id listMode 0x7f0c0009
 int id list_item 0x7f0c002a
 int id list_view_all_words 0x7f0c006d
+int id list_view_best_words 0x7f0c0071
 int id list_view_fav_words 0x7f0c006f
+int id list_view_worst_words 0x7f0c0073
 int id main_word 0x7f0c0081
 int id mark_text 0x7f0c0065
 int id media_actions 0x7f0c0077
@@ -544,8 +547,6 @@ int id tabMode 0x7f0c000b
 int id text 0x7f0c007e
 int id text2 0x7f0c007c
 int id textSpacerNoButtons 0x7f0c0033
-int id textView3 0x7f0c0071
-int id textView4 0x7f0c0073
 int id time 0x7f0c007a
 int id title 0x7f0c002c
 int id title_template 0x7f0c002f

@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.quizenglishb1.com.quizenglishb1.utilities.CoupleString;
 import com.quizenglishb1.com.quizenglishb1.utilities.Word;
+import com.quizenglishb1.com.quizenglishb1.utilities.WordStat;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,6 +31,11 @@ public class WordsDB extends SQLiteOpenHelper{
     private String createFAVOURITESSP = "CREATE TABLE IF NOT EXISTS FAVOURITESSP"+
             "(wordSP TEXT)";
 
+    private String createWORDSTATS = "CREATE TABLE IF NOT EXISTS WORDSTATS"+
+            "(word TEXT," +
+            "hits INTEGER," +
+            "fails INTEGER)";
+
     public WordsDB(Context context) {
         super(context, "DataBase", null, 1);
     }
@@ -40,6 +46,7 @@ public class WordsDB extends SQLiteOpenHelper{
         db.execSQL(createWORDTRANSLATIONTABLE);
         db.execSQL(createFAVOURITESEN);
         db.execSQL(createFAVOURITESSP);
+        db.execSQL(createWORDSTATS);
         init(db);
     }
 
@@ -860,4 +867,77 @@ public class WordsDB extends SQLiteOpenHelper{
         db.execSQL("DELETE FROM FAVOURITESEN WHERE wordEN = '"+word+"'");
         db.close();
     }
+
+
+    /**METHODS RELATED WITH THE WORDSTATS TABLE*/
+    public void addHit(String word){
+        SQLiteDatabase dbR = getReadableDatabase();
+        SQLiteDatabase dbW = getWritableDatabase();
+        Cursor cursor = dbR.rawQuery("SELECT * FROM WORDSTATS WHERE word='"+word+"'",null);
+        if(cursor.getCount()==0){ //Esto es porque la palabra aún no apareció en ningún juego
+            dbW.execSQL("INSERT INTO WORDSTATS VALUES ('"+word+"', 1, 0)");
+        } else {
+            dbW.execSQL("UPDATE WORDSTATS SET hits = hits + 1 WHERE word = '"+word+"')");
+        }
+        cursor.close();
+        dbR.close();
+        dbW.close();
+    }
+
+    public void addFail(String word){
+        SQLiteDatabase dbR = getReadableDatabase();
+        SQLiteDatabase dbW = getWritableDatabase();
+        Cursor cursor = dbR.rawQuery("SELECT * FROM WORDSTATS WHERE word='"+word+"'",null);
+        if(cursor.getCount()==0){ //Esto es porque la palabra aún no apareció en ningún juego
+            dbW.execSQL("INSERT INTO WORDSTATS VALUES ('"+word+"', 0, 1)");
+        } else {
+            dbW.execSQL("UPDATE WORDSTATS SET fails = fails + 1 WHERE word = '"+word+"')");
+        }
+        cursor.close();
+        dbR.close();
+        dbW.close();
+    }
+
+    public List<WordStat> getBestWords(){
+        List<WordStat> res = new ArrayList<>();
+
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM WORDSTATS WHERE hits > fails AND hits > 0 ORDER BY (hits - fails) ASC",null);
+
+        while(cursor.moveToNext()){
+            List<Word> aux = getWordFromEn(cursor.getString(0));
+            for(Word w:aux){
+                WordStat ws = WordStat.create(w.getMainWord(),w.getTranslations(),w.getType(),new Integer(cursor.getString(1)), new Integer(cursor.getString(2)));
+                res.add(ws);
+            }
+
+        }
+
+        cursor.close();
+        db.close();
+
+        return res;
+    }
+
+    public List<WordStat> getWorstWords(){
+        List<WordStat> res = new ArrayList<>();
+
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM WORDSTATS WHERE fails > hits AND fails > 0 ORDER BY (fails - hits) ASC",null);
+
+        while(cursor.moveToNext()){
+            List<Word> aux = getWordFromEn(cursor.getString(0));
+            for(Word w:aux){
+                WordStat ws = WordStat.create(w.getMainWord(),w.getTranslations(),w.getType(),new Integer(cursor.getString(1)), new Integer(cursor.getString(2)));
+                res.add(ws);
+            }
+
+        }
+
+        cursor.close();
+        db.close();
+
+        return res;
+    }
+
 }

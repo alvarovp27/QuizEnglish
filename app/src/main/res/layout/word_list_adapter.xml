@@ -41,4 +41,11 @@
         android:layout_marginLeft="300dp"
         android:layout_alignParentLeft="true" />
 
+    <TextView
+        android:id="@+id/hits_and_fails"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/word_translations"
+        android:layout_marginTop="10dp"/>
+
 </RelativeLayout>

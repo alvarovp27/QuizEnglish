@@ -1556,7 +1556,7 @@ containing a value of this type.
         public static final int action_mode_bar=0x7f0c003d;
         public static final int action_mode_bar_stub=0x7f0c003c;
         public static final int action_mode_close_button=0x7f0c0025;
-        public static final int action_settings=0x7f0c0086;
+        public static final int action_settings=0x7f0c0087;
         public static final int activity_chooser_view_content=0x7f0c0026;
         public static final int alertTitle=0x7f0c0030;
         public static final int allWords=0x7f0c0063;
@@ -1587,6 +1587,7 @@ containing a value of this type.
         public static final int expand_activities_button=0x7f0c0027;
         public static final int expanded_menu=0x7f0c0037;
         public static final int favourites_img_button=0x7f0c0085;
+        public static final int hits_and_fails=0x7f0c0086;
         public static final int home=0x7f0c0004;
         public static final int homeAsUp=0x7f0c000d;
         public static final int home_button=0x7f0c0068;
@@ -1609,7 +1610,9 @@ containing a value of this type.
         public static final int listMode=0x7f0c0009;
         public static final int list_item=0x7f0c002a;
         public static final int list_view_all_words=0x7f0c006d;
+        public static final int list_view_best_words=0x7f0c0071;
         public static final int list_view_fav_words=0x7f0c006f;
+        public static final int list_view_worst_words=0x7f0c0073;
         public static final int main_word=0x7f0c0081;
         public static final int mark_text=0x7f0c0065;
         public static final int media_actions=0x7f0c0077;
@@ -1661,8 +1664,6 @@ containing a value of this type.
         public static final int text=0x7f0c007e;
         public static final int text2=0x7f0c007c;
         public static final int textSpacerNoButtons=0x7f0c0033;
-        public static final int textView3=0x7f0c0071;
-        public static final int textView4=0x7f0c0073;
         public static final int time=0x7f0c007a;
         public static final int title=0x7f0c002c;
         public static final int title_template=0x7f0c002f;

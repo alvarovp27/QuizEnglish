@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.quizenglishb1.com.quizenglishb1.utilities.ListTypes;
 import com.quizenglishb1.com.quizenglishb1.utilities.Word;
+import com.quizenglishb1.com.quizenglishb1.utilities.WordStat;
 
 import org.w3c.dom.Text;
 
@@ -31,6 +32,15 @@ public class WordList extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_word_list);
 
+        //Recojo de la BD Todo lo que necesito
+        final WordsDB db = new WordsDB(this);
+        List<Word> allWords = db.getAllEnglishWords();
+        List<Word> favWords = db.getAllFavouritesEn();
+        List<WordStat> bestWords = db.getBestWords();
+        List<WordStat> worstWords = db.getWorstWords();
+        db.close();
+
+
         /*Tabla*/
         Resources res = getResources();
 
@@ -44,14 +54,8 @@ public class WordList extends ActionBarActivity {
         spec1.setIndicator("All");
         tabs.addTab(spec1);
 
-        //Contenido de la tabla 1
-        final WordsDB db = new WordsDB(this);
-        List<Word> allWords = db.getAllEnglishWords();
-        List<Word> favWords = db.getAllFavouritesEn();
-        db.close();
-
         ListView listViewAllWords = (ListView) findViewById(R.id.list_view_all_words);
-        listViewAllWords.setAdapter(new WordListAdapter(context, allWords, favWords, ListTypes.ALL));
+        listViewAllWords.setAdapter(new WordListAdapter(context, allWords, favWords,bestWords,worstWords, ListTypes.ALL));
 
         //Tabla 2
         TabHost.TabSpec spec2 = tabs.newTabSpec("mitab2");
@@ -60,13 +64,16 @@ public class WordList extends ActionBarActivity {
         tabs.addTab(spec2);
 
         ListView listViewFavWords = (ListView) findViewById(R.id.list_view_fav_words);
-        listViewFavWords.setAdapter(new WordListAdapter(context, allWords, favWords, ListTypes.FAVOURITES));
+        listViewFavWords.setAdapter(new WordListAdapter(context, allWords, favWords,bestWords,worstWords, ListTypes.FAVOURITES));
 
         //Tabla 3
         TabHost.TabSpec spec3 = tabs.newTabSpec("mitab3");
         spec3.setContent(R.id.tab3);
-        spec3.setIndicator("Learned");
+        spec3.setIndicator("Best");
         tabs.addTab(spec3);
+
+        ListView listViewBestWords = (ListView) findViewById(R.id.list_view_best_words);
+        listViewBestWords.setAdapter(new WordListAdapter(context, allWords, favWords,bestWords,worstWords, ListTypes.BEST));
 
         //Tabla 4
         TabHost.TabSpec spec4 = tabs.newTabSpec("mitab2");
@@ -74,8 +81,12 @@ public class WordList extends ActionBarActivity {
         spec4.setIndicator("Worst");
         tabs.addTab(spec4);
 
+        ListView listViewWorstWords = (ListView) findViewById(R.id.list_view_worst_words);
+        listViewWorstWords.setAdapter(new WordListAdapter(context,allWords, favWords,bestWords,worstWords,ListTypes.WORST));
+
         tabs.setCurrentTab(0);
 
+        //Este método se invoca cuando cambiamos de pestaña de la tabla
         tabs.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
             @Override
             public void onTabChanged(String tabId) {
@@ -83,13 +94,21 @@ public class WordList extends ActionBarActivity {
                 final WordsDB db = new WordsDB(context);
                 List<Word> allWords = db.getAllEnglishWords();
                 List<Word> favWords = db.getAllFavouritesEn();
+                List<WordStat> bestWords = db.getBestWords();
+                List<WordStat> worstWords = db.getWorstWords();
                 db.close();
                 if (tabId == "mitab1") {
                     ListView listViewAllWords = (ListView) findViewById(R.id.list_view_all_words);
-                    listViewAllWords.setAdapter(new WordListAdapter(context, allWords, favWords, ListTypes.ALL));
+                    listViewAllWords.setAdapter(new WordListAdapter(context, allWords, favWords,bestWords,worstWords, ListTypes.ALL));
                 } else if(tabId=="mitab2"){
                     ListView listViewFavWords = (ListView) findViewById(R.id.list_view_fav_words);
-                    listViewFavWords.setAdapter(new WordListAdapter(context, allWords, favWords, ListTypes.FAVOURITES));
+                    listViewFavWords.setAdapter(new WordListAdapter(context, allWords, favWords,bestWords,worstWords, ListTypes.FAVOURITES));
+                } else if(tabId=="mitab3"){
+                    ListView listViewFavWords = (ListView) findViewById(R.id.list_view_best_words);
+                    listViewFavWords.setAdapter(new WordListAdapter(context, allWords, favWords,bestWords,worstWords, ListTypes.BEST));
+                } else if(tabId=="mitab4"){
+                    ListView listViewFavWords = (ListView) findViewById(R.id.list_view_worst_words);
+                    listViewFavWords.setAdapter(new WordListAdapter(context, allWords, favWords,bestWords,worstWords, ListTypes.WORST));
                 }
             }
         });

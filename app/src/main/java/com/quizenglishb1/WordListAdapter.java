@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.quizenglishb1.com.quizenglishb1.utilities.Answer;
 import com.quizenglishb1.com.quizenglishb1.utilities.ListTypes;
 import com.quizenglishb1.com.quizenglishb1.utilities.Word;
+import com.quizenglishb1.com.quizenglishb1.utilities.WordStat;
 
 import org.w3c.dom.Text;
 
@@ -26,12 +27,16 @@ public class WordListAdapter extends BaseAdapter{
     private Context context;
     private List<Word> words;
     private List<Word> favList;
+    private List<WordStat> bestWords;
+    private List<WordStat> worstWords;
     private ListTypes listTypes;
 
-    public WordListAdapter(Context context, List<Word> words, List<Word> favList, ListTypes listTypes){
+    public WordListAdapter(Context context, List<Word> words, List<Word> favList, List<WordStat> bestWords, List<WordStat> worstWords, ListTypes listTypes){
         this.context=context;
         this.words=words;
         this.favList=favList;
+        this.bestWords=bestWords;
+        this.worstWords=worstWords;
         this.listTypes=listTypes;
     }
 
@@ -42,6 +47,10 @@ public class WordListAdapter extends BaseAdapter{
             return words.size();
         else if(listTypes==ListTypes.FAVOURITES)
             return favList.size();
+        else if(listTypes==ListTypes.BEST)
+            return bestWords.size();
+        else if(listTypes==ListTypes.WORST)
+            return worstWords.size();
         else
             return 0;
     }
@@ -52,6 +61,10 @@ public class WordListAdapter extends BaseAdapter{
             return words.get(position);
         else if(listTypes==ListTypes.FAVOURITES)
             return favList.get(position);
+        else if(listTypes==ListTypes.BEST)
+            return bestWords.get(position);
+        else if(listTypes==ListTypes.WORST)
+            return worstWords.get(position);
         else
             return 0;
     }
@@ -135,7 +148,7 @@ public class WordListAdapter extends BaseAdapter{
                 for(int i = 0; i<favouriteWord.getTranslations().size();i++){
                     Word aux = favouriteWord.getTranslations().get(i);
                     translationsStr+=aux.getMainWord()+" ("+aux.getType()+")";
-                    if(i!=words.get(position).getTranslations().size()-1)
+                    if(i!=favouriteWord.getTranslations().size()-1)
                         translationsStr+=("\n");
                 }
                 translations.setText(translationsStr);
@@ -168,9 +181,107 @@ public class WordListAdapter extends BaseAdapter{
                     }
                 });
                 break;
+
+            case BEST:
+                final WordStat bestWord = bestWords.get(position);
+                mainWord.setText(bestWord.getMainWord());
+                typeMainWord.setText(bestWord.getType());
+
+                TextView stats = (TextView) rowView.findViewById(R.id.hits_and_fails);
+                stats.setText("Hits: "+bestWord.getHits()+" - Fails: "+bestWord.getFails());
+
+                translations.setText("");
+                for(int i = 0; i<bestWord.getTranslations().size();i++){
+                    Word aux = bestWord.getTranslations().get(i);
+                    translationsStr+=aux.getMainWord()+" ("+aux.getType()+")";
+                    if(i!=bestWord.getTranslations().size()-1)
+                        translationsStr+=("\n");
+                }
+                translations.setText(translationsStr);
+
+                final Word wAux2 = Word.create(bestWord.getMainWord(),bestWord.getType());
+                if(favList.contains(wAux2)){
+                    favButton.setImageResource(R.drawable.ic_fav);
+                } else {
+                    favButton.setImageResource(R.drawable.ic_non_fav);
+                }
+
+                //Comportamiento del botón de fav
+                favButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (favList.contains(wAux2)) {
+                            WordsDB db = new WordsDB(context);
+                            db.removeFavouriteEn(bestWord.getMainWord());
+                            favList = db.getAllFavouritesEn();
+                            db.close();
+                            favButton.setImageResource(R.drawable.ic_non_fav);
+                            notifyDataSetChanged(); //Refresca la ListView tras cambiar algún elemento
+                        } else {
+                            WordsDB db = new WordsDB(context);
+                            db.addFavouriteEn(bestWord.getMainWord());
+                            favList = db.getAllFavouritesEn();
+                            db.close();
+                            favButton.setImageResource(R.drawable.ic_fav);
+                            notifyDataSetChanged();
+                        }
+                    }
+                });
+                break;
+
+            case WORST:
+                final WordStat worstWord = worstWords.get(position);
+                mainWord.setText(worstWord.getMainWord());
+                typeMainWord.setText(worstWord.getType());
+
+                TextView statsWorst = (TextView) rowView.findViewById(R.id.hits_and_fails);
+                statsWorst.setText("Hits: "+worstWord.getHits()+" - Fails: "+worstWord.getFails());
+
+                translations.setText("");
+                for(int i = 0; i<worstWord.getTranslations().size();i++){
+                    Word aux = worstWord.getTranslations().get(i);
+                    translationsStr+=aux.getMainWord()+" ("+aux.getType()+")";
+                    if(i!=worstWord.getTranslations().size()-1)
+                        translationsStr+=("\n");
+                }
+                translations.setText(translationsStr);
+
+                //No debería ser necesario hacer esto, pero si no no pilla que WordStat hereda de
+                //Word. Algo raro ocurre ahí.
+                final Word wAux = Word.create(worstWord.getMainWord(),worstWord.getType());
+                if(favList.contains(wAux)){
+                    favButton.setImageResource(R.drawable.ic_fav);
+                } else {
+                    favButton.setImageResource(R.drawable.ic_non_fav);
+                }
+
+                Log.d("Contains?","** Contiene la lista de favoritos la palabr actual? "+favList.contains(wAux));
+                Log.d("ListFav content","** Contenido de la lista de favoritos: "+favList.toString());
+
+                //Comportamiento del botón de fav
+                favButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (favList.contains(wAux)) {
+                            WordsDB db = new WordsDB(context);
+                            db.removeFavouriteEn(worstWord.getMainWord());
+                            favList = db.getAllFavouritesEn();
+                            db.close();
+                            favButton.setImageResource(R.drawable.ic_non_fav);
+                            notifyDataSetChanged(); //Refresca la ListView tras cambiar algún elemento
+                        } else {
+                            WordsDB db = new WordsDB(context);
+                            db.addFavouriteEn(worstWord.getMainWord());
+                            favList = db.getAllFavouritesEn();
+                            db.close();
+                            favButton.setImageResource(R.drawable.ic_fav);
+                            notifyDataSetChanged();
+                        }
+                    }
+                });
+                break;
+
         }
-
-
         return rowView;
     }
 }

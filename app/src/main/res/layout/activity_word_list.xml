@@ -53,10 +53,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" >
 
-                    <TextView android:id="@+id/textView3"
-                        android:text="Contenido Tab 3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                    <ListView
+                        android:id="@+id/list_view_best_words"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content">
+
+
+                    </ListView>
                 </LinearLayout>
 
                 <LinearLayout android:id="@+id/tab4"
@@ -64,10 +67,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" >
 
-                    <TextView android:id="@+id/textView4"
-                        android:text="Contenido Tab 2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                    <ListView
+                        android:id="@+id/list_view_worst_words"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content">
+
+
+                    </ListView>
                 </LinearLayout>
 
             </FrameLayout>

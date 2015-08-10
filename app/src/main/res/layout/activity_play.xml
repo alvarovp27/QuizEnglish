@@ -63,7 +63,7 @@
         android:layout_marginTop="50dp">
 
         <TextView
-            android:text="holaala"
+            android:text=""
             android:id="@+id/allWords"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

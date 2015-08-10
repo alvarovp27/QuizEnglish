@@ -79,9 +79,19 @@ public class Play extends ActionBarActivity {
 
                 if(questions.get(wordCount).contains(wordSpanish.getText().toString())){
                     isCorrect.setText("OK!");
+
+                    WordsDB db = new WordsDB(context);
+                    db.addHit(wordEnglish.getText().toString());
+                    db.close();
+
                     right++;
                 }else{
                     isCorrect.setText("Wrong\nThe correct answer for "+questions.get(wordCount).get(0));
+
+                    WordsDB db = new WordsDB(context);
+                    db.addFail(wordEnglish.getText().toString());
+                    db.close();
+
                     if(questions.get(wordCount).size()>2)
                         isCorrect.append(" are");
                     else

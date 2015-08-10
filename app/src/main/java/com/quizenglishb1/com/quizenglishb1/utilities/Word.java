@@ -12,7 +12,7 @@ public class Word {
     private List<Word> translations;
     private String type;
 
-    private Word(String mainWord, List<Word> translations, String type){
+    protected Word(String mainWord, List<Word> translations, String type){
         this.mainWord=mainWord;
         this.type=type;
 
