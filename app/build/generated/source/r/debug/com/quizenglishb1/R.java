@@ -1553,7 +1553,7 @@ containing a value of this type.
         public static final int action_mode_bar=0x7f0c003d;
         public static final int action_mode_bar_stub=0x7f0c003c;
         public static final int action_mode_close_button=0x7f0c0025;
-        public static final int action_settings=0x7f0c0081;
+        public static final int action_settings=0x7f0c0085;
         public static final int activity_chooser_view_content=0x7f0c0026;
         public static final int alertTitle=0x7f0c0030;
         public static final int allWords=0x7f0c0063;
@@ -1604,6 +1604,8 @@ containing a value of this type.
         public static final int list=0x7f0c005a;
         public static final int listMode=0x7f0c0009;
         public static final int list_item=0x7f0c002a;
+        public static final int list_view_all_words=0x7f0c006d;
+        public static final int main_word=0x7f0c0081;
         public static final int mark_text=0x7f0c0065;
         public static final int media_actions=0x7f0c0077;
         public static final int middle=0x7f0c0015;
@@ -1657,16 +1659,18 @@ containing a value of this type.
         public static final int textView2=0x7f0c006f;
         public static final int textView3=0x7f0c0071;
         public static final int textView4=0x7f0c0073;
-        public static final int text_view_tab1=0x7f0c006d;
         public static final int time=0x7f0c007a;
         public static final int title=0x7f0c002c;
         public static final int title_template=0x7f0c002f;
         public static final int tools=0x7f0c005b;
         public static final int topPanel=0x7f0c002e;
+        public static final int translations_text_info=0x7f0c0083;
+        public static final int type_main_word=0x7f0c0082;
         public static final int up=0x7f0c0008;
         public static final int useLogo=0x7f0c0012;
         public static final int welcome=0x7f0c0057;
         public static final int withText=0x7f0c001a;
+        public static final int word_translations=0x7f0c0084;
         public static final int wrap_content=0x7f0c001d;
     }
     public static final class integer {
@@ -1720,6 +1724,7 @@ containing a value of this type.
         public static final int select_dialog_multichoice_material=0x7f040028;
         public static final int select_dialog_singlechoice_material=0x7f040029;
         public static final int support_simple_spinner_dropdown_item=0x7f04002a;
+        public static final int word_list_adapter=0x7f04002b;
     }
     public static final class menu {
         public static final int menu_game_settings=0x7f0d0000;

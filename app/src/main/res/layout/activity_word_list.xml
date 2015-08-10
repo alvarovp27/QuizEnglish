@@ -25,10 +25,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" >
 
-                    <TextView android:id="@+id/text_view_tab1"
-                        android:text=""
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                    <ListView
+                        android:id="@+id/list_view_all_words"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content">
+
+                    </ListView>
+
                 </LinearLayout>
 
                 <LinearLayout android:id="@+id/tab2"

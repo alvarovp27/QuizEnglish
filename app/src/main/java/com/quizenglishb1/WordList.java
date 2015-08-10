@@ -1,13 +1,17 @@
 package com.quizenglishb1;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListView;
 import android.widget.TabHost;
 import android.widget.TextView;
+
+import com.quizenglishb1.com.quizenglishb1.utilities.Word;
 
 import org.w3c.dom.Text;
 
@@ -15,6 +19,8 @@ import java.util.List;
 
 
 public class WordList extends ActionBarActivity {
+
+    private Context context = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +41,16 @@ public class WordList extends ActionBarActivity {
         tabs.addTab(spec);
 
         //Contenido de la tabla 1
-        TextView textViewTab1 = (TextView) findViewById(R.id.text_view_tab1);
+        final WordsDB db = new WordsDB(this);
+        List<Word> allWords = db.getAllEnglishWords();
+        db.close();
+
+        ListView listViewAllWords = (ListView) findViewById(R.id.list_view_all_words);
+        listViewAllWords.setAdapter(new WordListAdapter(context, allWords));
+
+
+
+        /*TextView textViewTab1 = (TextView) findViewById(R.id.text_view_tab1);
         textViewTab1.setMovementMethod(new ScrollingMovementMethod());
 
         final WordsDB db = new WordsDB(this);
@@ -45,7 +60,9 @@ public class WordList extends ActionBarActivity {
         for(String[] s:allWords){
             String line = s[0]+" ("+s[1]+") - "+s[2]+" ("+s[3]+")\n";
             textViewTab1.append(line);
-        }
+        }*/
+
+
 
         spec = tabs.newTabSpec("mitab2");
         spec.setContent(R.id.tab2);

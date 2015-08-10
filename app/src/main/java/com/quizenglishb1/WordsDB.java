@@ -763,7 +763,6 @@ public class WordsDB extends SQLiteOpenHelper{
                 word.addTranslation(Word.create(cursor.getString(0),cursor.getString(1)));
                 res.add(word);
             }
-
         }
 
         cursor.close();

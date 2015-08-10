@@ -64,4 +64,8 @@ public class Word {
         result = 31 * result + type.hashCode();
         return result;
     }
+
+    public String toString(){
+        return mainWord+" ("+type+")";
+    }
 }
