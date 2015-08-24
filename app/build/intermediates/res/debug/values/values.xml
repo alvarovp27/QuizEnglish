@@ -223,6 +223,7 @@
     <!-- From: file:/C:/Users/Alvaro/Android_WS/QuizEnglishB1/app/src/main/res/values/strings.xml -->
     <eat-comment/>
     <string name="title_activity_game_settings">GameSettings</string>
+    <string name="title_activity_login">Login</string>
     <string name="title_activity_play">Play</string>
     <string name="title_activity_result">Result</string>
     <string name="title_activity_summary_list">SummaryList</string>
