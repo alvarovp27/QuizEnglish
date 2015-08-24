@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import com.quizenglishb1.com.quizenglishb1.utilities.CoupleString;
 import com.quizenglishb1.com.quizenglishb1.utilities.Word;
 import com.quizenglishb1.com.quizenglishb1.utilities.WordStat;
+import com.quizenglishb1.typesForJSON.WordTranslation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,7 +27,7 @@ public class WordsDB extends SQLiteOpenHelper{
             "typeEN TEXT," +
             "category TEXT)";
 
-    private String createFAVOURITESEN = "CREATE TABLE IF NOT EXISTS FAVOURITESEN"+
+    private String createFAVOURITES = "CREATE TABLE IF NOT EXISTS FAVOURITES"+
             "(wordEN TEXT)";
 
     private String createFAVOURITESSP = "CREATE TABLE IF NOT EXISTS FAVOURITESSP"+
@@ -48,11 +49,11 @@ public class WordsDB extends SQLiteOpenHelper{
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(createWORDTRANSLATIONTABLE);
-        db.execSQL(createFAVOURITESEN);
+        db.execSQL(createFAVOURITES);
         db.execSQL(createFAVOURITESSP);
         db.execSQL(createWORDSTATS);
         db.execSQL(createCATEGORYS);
-        init(db);
+        //init(db);
     }
 
     private void init(SQLiteDatabase db){
@@ -913,7 +914,7 @@ public class WordsDB extends SQLiteOpenHelper{
         //FAVOURITESEN
 
         SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM FAVOURITESEN ORDER BY wordEN ASC", null);
+        Cursor cursor = db.rawQuery("SELECT * FROM FAVOURITES ORDER BY wordEN ASC", null);
 
         List<Word> res = new ArrayList<>();
 
@@ -931,13 +932,13 @@ public class WordsDB extends SQLiteOpenHelper{
 
     public void addFavouriteEn(String word){
         SQLiteDatabase db = getWritableDatabase();
-        db.execSQL("INSERT INTO FAVOURITESEN VALUES('" + word + "')");
+        db.execSQL("INSERT INTO FAVOURITES VALUES('" + word + "')");
         db.close();
     }
 
     public void removeFavouriteEn(String word){
         SQLiteDatabase db = getWritableDatabase();
-        db.execSQL("DELETE FROM FAVOURITESEN WHERE wordEN = '"+word+"'");
+        db.execSQL("DELETE FROM FAVOURITES WHERE wordEN = '" + word + "'");
         db.close();
     }
 
@@ -1013,4 +1014,33 @@ public class WordsDB extends SQLiteOpenHelper{
         return res;
     }
 
+    /** Métodos para sincronizar desde la API*/
+    public void resetDB(){
+        SQLiteDatabase db = getWritableDatabase();
+        db.execSQL("DELETE FROM WORDSTATS");
+        db.execSQL("DELETE FROM WORDTRANSLATIONS");
+        db.execSQL("DELETE FROM FAVOURITES");
+        db.close();
+    }
+
+    public void insertWordTranslation(WordTranslation wt){
+        SQLiteDatabase db = getWritableDatabase();
+        db.execSQL("INSERT INTO WORDTRANSLATIONS VALUES('" + wt.getWordSP() + "', '" +
+                wt.getTypeSP() + "', '" + wt.getWordEN() + "', '" + wt.getTypeEN() + "', '" +
+                wt.getCategory() + "')");
+        db.close();
+    }
+
+    public void insertFavourite(String word){
+        SQLiteDatabase db = getWritableDatabase();
+        db.execSQL("INSERT INTO FAVOURITES VALUES('"+word+"')");
+        db.close();
+    }
+/*
+    public void insertWordStat(String word, ){
+        SQLiteDatabase db = getWritableDatabase();
+        db.execSQL("INSERT INTO FAVOURITES VALUES('"+word+"')");
+        db.close();
+    }
+*/
 }

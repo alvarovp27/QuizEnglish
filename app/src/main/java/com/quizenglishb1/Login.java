@@ -15,24 +15,30 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.quizenglishb1.com.quizenglishb1.utilities.User;
+import com.quizenglishb1.typesForJSON.WordTranslation;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 
 public class Login extends ActionBarActivity {
 
     private static String login_URI = "http://quiztionary-api.appspot.com/api/users/get-token";
+    private static String allWordTranslations_URI = "http://quiztionary-api.appspot.com/api/words";
 
     private EditText userText;
     private EditText passText;
@@ -102,14 +108,65 @@ public class Login extends ActionBarActivity {
     }
 
     private void launchActivity(Context contexto, String token){
+        WordsDB wdb = new WordsDB(contexto);
+        wdb.resetDB();
+        WordTranslationsAsync wta = new WordTranslationsAsync();
+        wta.execute(token);
+
+        List<WordTranslation> toAdd = new ArrayList<>();
+
+        try {
+           toAdd = wta.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        for(WordTranslation wt:toAdd)
+            wdb.insertWordTranslation(wt);
+
         Intent i = new Intent(contexto, MainActivity.class);
         i.putExtra("token",token);
         startActivity(i);
     }
 
+    private class WordTranslationsAsync extends AsyncTask<String, Integer, List<WordTranslation>>{
+
+        @Override
+        protected List<WordTranslation> doInBackground(String... params) {
+            HttpClient hc = new DefaultHttpClient();
+
+            HttpGet get = new HttpGet(allWordTranslations_URI);
+            get.setHeader("Authentication",params[0]);
+
+            List<WordTranslation> res = new ArrayList<>();
+
+            try {
+                HttpResponse resp = hc.execute(get);
+
+                String respStr = EntityUtils.toString(resp.getEntity());
+
+                //Construyo JSON a partir de la resp.
+
+                JSONArray respJSON = new JSONArray(respStr);
+                for(int i = 0;i<respJSON.length();i++){
+                    JSONObject j = respJSON.getJSONObject(i);
+                    res.add(new WordTranslation(j.getString("wordSP"),j.getString("typeSP"),
+                            j.getString("wordEN"),j.getString("typeEN"),j.getString("category")));
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return res;
+        }
+    }
+
+
     private class LoginAsync extends AsyncTask<String,Integer,String> {
-
-
         @Override
         protected String doInBackground(String... params) {
             JSONObject loginInfo = new JSONObject();
