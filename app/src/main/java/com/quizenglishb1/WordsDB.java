@@ -5,9 +5,12 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.quizenglishb1.asynctasks.FavouritesOperationsAsync;
+import com.quizenglishb1.asynctasks.WordStatsOperationsAsync;
 import com.quizenglishb1.com.quizenglishb1.utilities.CoupleString;
 import com.quizenglishb1.com.quizenglishb1.utilities.Word;
 import com.quizenglishb1.com.quizenglishb1.utilities.WordStat;
+import com.quizenglishb1.typesForJSON.WordStat2;
 import com.quizenglishb1.typesForJSON.WordTranslation;
 
 import java.util.ArrayList;
@@ -930,21 +933,25 @@ public class WordsDB extends SQLiteOpenHelper{
         return res;
     }
 
-    public void addFavouriteEn(String word){
+    public void addFavouriteEn(String word, String token){
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL("INSERT INTO FAVOURITES VALUES('" + word + "')");
         db.close();
+        FavouritesOperationsAsync foa = new FavouritesOperationsAsync();
+        foa.execute(word,"add",token);
     }
 
-    public void removeFavouriteEn(String word){
+    public void removeFavouriteEn(String word, String token){
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL("DELETE FROM FAVOURITES WHERE wordEN = '" + word + "'");
         db.close();
+        FavouritesOperationsAsync foa = new FavouritesOperationsAsync();
+        foa.execute(word, "remove", token);
     }
 
 
     /**METHODS RELATED WITH THE WORDSTATS TABLE*/
-    public void addHit(String word){
+    public void addHit(String word, String token){
         SQLiteDatabase dbR = getReadableDatabase();
         SQLiteDatabase dbW = getWritableDatabase();
         Cursor cursor = dbR.rawQuery("SELECT * FROM WORDSTATS WHERE word='"+word+"'",null);
@@ -953,12 +960,22 @@ public class WordsDB extends SQLiteOpenHelper{
         } else {
             dbW.execSQL("UPDATE WORDSTATS SET hits = hits + 1 WHERE word = '"+word+"'");
         }
+
+
+        //Sacar el número de hits y fails mediante consulta
+        cursor = dbR.rawQuery("SELECT * FROM WORDSTATS WHERE word='"+word+"'",null);
+        cursor.moveToNext();
+        int hits = cursor.getInt(1);
+        int fails = cursor.getInt(2);
         cursor.close();
         dbR.close();
         dbW.close();
+        //crear la asynctask y pasarle word, hits y fails
+        WordStatsOperationsAsync woa = new WordStatsOperationsAsync();
+        woa.execute(word,""+hits,""+fails,token);
     }
 
-    public void addFail(String word){
+    public void addFail(String word, String token){
         SQLiteDatabase dbR = getReadableDatabase();
         SQLiteDatabase dbW = getWritableDatabase();
         Cursor cursor = dbR.rawQuery("SELECT * FROM WORDSTATS WHERE word='"+word+"'",null);
@@ -967,9 +984,18 @@ public class WordsDB extends SQLiteOpenHelper{
         } else {
             dbW.execSQL("UPDATE WORDSTATS SET fails = fails + 1 WHERE word = '"+word+"'");
         }
+
+        //Sacar el número de hits y fails mediante consulta
+        cursor = dbR.rawQuery("SELECT * FROM WORDSTATS WHERE word='"+word+"'",null);
+        cursor.moveToNext();
+        int hits = cursor.getInt(1);
+        int fails = cursor.getInt(2);
         cursor.close();
         dbR.close();
         dbW.close();
+        //crear la asynctask y pasarle word, hits y fails
+        WordStatsOperationsAsync woa = new WordStatsOperationsAsync();
+        woa.execute(word, "" + hits, "" + fails, token);
     }
 
     public List<WordStat> getBestWords(){
@@ -1036,11 +1062,14 @@ public class WordsDB extends SQLiteOpenHelper{
         db.execSQL("INSERT INTO FAVOURITES VALUES('"+word+"')");
         db.close();
     }
-/*
-    public void insertWordStat(String word, ){
+
+    public void insertWordStat(WordStat2 ws){
+
+
+
         SQLiteDatabase db = getWritableDatabase();
-        db.execSQL("INSERT INTO FAVOURITES VALUES('"+word+"')");
+        db.execSQL("INSERT INTO WORDSTATS VALUES('"+ws.getWord()+"', '"+ws.getHits()+"', '"+ws.getFails()+"')");
         db.close();
     }
-*/
+
 }

@@ -25,12 +25,16 @@ import java.util.List;
 
 public class WordList extends ActionBarActivity {
 
+    private static String USER_TOKEN = "";
+
     private Context context = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_word_list);
+
+        USER_TOKEN = getIntent().getStringExtra("token");
 
         //Recojo de la BD Todo lo que necesito
         final WordsDB db = new WordsDB(this);
@@ -49,13 +53,13 @@ public class WordList extends ActionBarActivity {
 
         TabHost.TabSpec spec1 = tabs.newTabSpec("mitab1");
 
-        //Creo la tabla 1 y la añado al contenedor
+        //Creo la tabla 1 y la aÃ±ado al contenedor
         spec1.setContent(R.id.tab1);
         spec1.setIndicator("All");
         tabs.addTab(spec1);
 
         ListView listViewAllWords = (ListView) findViewById(R.id.list_view_all_words);
-        listViewAllWords.setAdapter(new WordListAdapter(context, allWords, favWords,bestWords,worstWords, ListTypes.ALL));
+        listViewAllWords.setAdapter(new WordListAdapter(context, allWords, favWords,bestWords,worstWords, ListTypes.ALL, USER_TOKEN));
 
         //Tabla 2
         TabHost.TabSpec spec2 = tabs.newTabSpec("mitab2");
@@ -64,7 +68,7 @@ public class WordList extends ActionBarActivity {
         tabs.addTab(spec2);
 
         ListView listViewFavWords = (ListView) findViewById(R.id.list_view_fav_words);
-        listViewFavWords.setAdapter(new WordListAdapter(context, allWords, favWords,bestWords,worstWords, ListTypes.FAVOURITES));
+        listViewFavWords.setAdapter(new WordListAdapter(context, allWords, favWords,bestWords,worstWords, ListTypes.FAVOURITES, USER_TOKEN));
 
         //Tabla 3
         TabHost.TabSpec spec3 = tabs.newTabSpec("mitab3");
@@ -73,7 +77,7 @@ public class WordList extends ActionBarActivity {
         tabs.addTab(spec3);
 
         ListView listViewBestWords = (ListView) findViewById(R.id.list_view_best_words);
-        listViewBestWords.setAdapter(new WordListAdapter(context, allWords, favWords,bestWords,worstWords, ListTypes.BEST));
+        listViewBestWords.setAdapter(new WordListAdapter(context, allWords, favWords,bestWords,worstWords, ListTypes.BEST, USER_TOKEN));
 
         //Tabla 4
         TabHost.TabSpec spec4 = tabs.newTabSpec("mitab2");
@@ -82,11 +86,11 @@ public class WordList extends ActionBarActivity {
         tabs.addTab(spec4);
 
         ListView listViewWorstWords = (ListView) findViewById(R.id.list_view_worst_words);
-        listViewWorstWords.setAdapter(new WordListAdapter(context,allWords, favWords,bestWords,worstWords,ListTypes.WORST));
+        listViewWorstWords.setAdapter(new WordListAdapter(context,allWords, favWords,bestWords,worstWords,ListTypes.WORST, USER_TOKEN));
 
         tabs.setCurrentTab(0);
 
-        //Este método se invoca cuando cambiamos de pestaña de la tabla
+        //Este mÃ©todo se invoca cuando cambiamos de pestaÃ±a de la tabla
         tabs.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
             @Override
             public void onTabChanged(String tabId) {
@@ -99,16 +103,16 @@ public class WordList extends ActionBarActivity {
                 db.close();
                 if (tabId == "mitab1") {
                     ListView listViewAllWords = (ListView) findViewById(R.id.list_view_all_words);
-                    listViewAllWords.setAdapter(new WordListAdapter(context, allWords, favWords,bestWords,worstWords, ListTypes.ALL));
+                    listViewAllWords.setAdapter(new WordListAdapter(context, allWords, favWords,bestWords,worstWords, ListTypes.ALL, USER_TOKEN));
                 } else if(tabId=="mitab2"){
                     ListView listViewFavWords = (ListView) findViewById(R.id.list_view_fav_words);
-                    listViewFavWords.setAdapter(new WordListAdapter(context, allWords, favWords,bestWords,worstWords, ListTypes.FAVOURITES));
+                    listViewFavWords.setAdapter(new WordListAdapter(context, allWords, favWords,bestWords,worstWords, ListTypes.FAVOURITES, USER_TOKEN));
                 } else if(tabId=="mitab3"){
                     ListView listViewFavWords = (ListView) findViewById(R.id.list_view_best_words);
-                    listViewFavWords.setAdapter(new WordListAdapter(context, allWords, favWords,bestWords,worstWords, ListTypes.BEST));
+                    listViewFavWords.setAdapter(new WordListAdapter(context, allWords, favWords,bestWords,worstWords, ListTypes.BEST, USER_TOKEN));
                 } else if(tabId=="mitab4"){
                     ListView listViewFavWords = (ListView) findViewById(R.id.list_view_worst_words);
-                    listViewFavWords.setAdapter(new WordListAdapter(context, allWords, favWords,bestWords,worstWords, ListTypes.WORST));
+                    listViewFavWords.setAdapter(new WordListAdapter(context, allWords, favWords,bestWords,worstWords, ListTypes.WORST, USER_TOKEN));
                 }
             }
         });

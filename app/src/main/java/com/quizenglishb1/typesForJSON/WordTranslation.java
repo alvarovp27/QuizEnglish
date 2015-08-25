@@ -57,4 +57,15 @@ public class WordTranslation {
     public String getCategory() {
         return category;
     }
+
+    @Override
+    public String toString() {
+        return "WordTranslation{" +
+                "wordSP='" + wordSP + '\'' +
+                ", typeSP='" + typeSP + '\'' +
+                ", wordEN='" + wordEN + '\'' +
+                ", typeEN='" + typeEN + '\'' +
+                ", category='" + category + '\'' +
+                '}';
+    }
 }

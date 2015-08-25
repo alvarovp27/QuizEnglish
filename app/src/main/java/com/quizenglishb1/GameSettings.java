@@ -56,6 +56,7 @@ public class GameSettings extends ActionBarActivity {
                         Toast.makeText(context, "The number of questions must be less than 50", Toast.LENGTH_SHORT).show();
                     else{
                         i.putExtra("nQuestions",nQuestions);
+                        i.putExtra("token",getIntent().getStringExtra("token"));
                         startActivity(i);
                     }
                 }

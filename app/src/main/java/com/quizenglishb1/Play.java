@@ -26,6 +26,8 @@ import java.util.Random;
 
 public class Play extends ActionBarActivity {
 
+    private static String USER_TOKEN = "";
+
     private Button sendWord;
     private EditText wordSpanish;
     private TextView wordEnglish;
@@ -47,6 +49,8 @@ public class Play extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play);
+
+        USER_TOKEN=getIntent().getStringExtra("token");
 
         wordEnglish = (TextView) findViewById(R.id.englishWord);
         wordSpanish = (EditText) findViewById(R.id.introduceSpanish);
@@ -81,7 +85,7 @@ public class Play extends ActionBarActivity {
                     isCorrect.setText("OK!");
 
                     WordsDB db = new WordsDB(context);
-                    db.addHit(wordEnglish.getText().toString());
+                    db.addHit(wordEnglish.getText().toString(),USER_TOKEN);
                     db.close();
 
                     right++;
@@ -89,7 +93,7 @@ public class Play extends ActionBarActivity {
                     isCorrect.setText("Wrong\nThe correct answer for "+questions.get(wordCount).get(0));
 
                     WordsDB db = new WordsDB(context);
-                    db.addFail(wordEnglish.getText().toString());
+                    db.addFail(wordEnglish.getText().toString(),USER_TOKEN);
                     db.close();
 
                     if(questions.get(wordCount).size()>2)

@@ -102,6 +102,7 @@ public class MainActivity extends ActionBarActivity {
             public void onClick(View v) {
 
                 Intent i = new Intent(contexto, GameSettings.class);
+                i.putExtra("token",USER_TOKEN);
                 startActivity(i);
             }
         });
@@ -110,14 +111,15 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(contexto, WordList.class);
+                i.putExtra("token",USER_TOKEN);
                 startActivity(i);
             }
         });
     }
 
 
+    /** Comprueba si el token ha expirado */
     private class CheckToken extends AsyncTask<String,Integer,String>{
-
         @Override
         protected String doInBackground(String... params) {
             String toSend = checkToken_URI+params[0];
@@ -140,7 +142,6 @@ public class MainActivity extends ActionBarActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
             return respStr;
         }
     }

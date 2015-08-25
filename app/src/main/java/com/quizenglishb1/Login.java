@@ -2,6 +2,7 @@ package com.quizenglishb1;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.http.HttpResponseCache;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.quizenglishb1.com.quizenglishb1.utilities.User;
+import com.quizenglishb1.typesForJSON.WordStat2;
 import com.quizenglishb1.typesForJSON.WordTranslation;
 
 import org.apache.http.HttpResponse;
@@ -39,6 +41,8 @@ public class Login extends ActionBarActivity {
 
     private static String login_URI = "http://quiztionary-api.appspot.com/api/users/get-token";
     private static String allWordTranslations_URI = "http://quiztionary-api.appspot.com/api/words";
+    private static String allFavourites_URI = "http://quiztionary-api.appspot.com/api/words/favs";
+    private static String allWordStats_URI = "http://quiztionary-api.appspot.com/api/words/stats";
 
     private EditText userText;
     private EditText passText;
@@ -113,26 +117,131 @@ public class Login extends ActionBarActivity {
         WordTranslationsAsync wta = new WordTranslationsAsync();
         wta.execute(token);
 
-        List<WordTranslation> toAdd = new ArrayList<>();
+        List<WordTranslation> wordsToAdd = new ArrayList<>();
 
         try {
-           toAdd = wta.get();
+            wordsToAdd = wta.get();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
 
-        for(WordTranslation wt:toAdd)
+        Log.d("Lista_word_transl", wordsToAdd.toString());
+
+        for(WordTranslation wt:wordsToAdd)
             wdb.insertWordTranslation(wt);
 
+        Log.d("exito_wordtranslation","EXITO INSERT WORDTRANSLATIONS");
+
+        //Pido los favoritos y los meto en la BD
+        FavouritesAsync fa = new FavouritesAsync();
+        fa.execute(token);
+        List<String> favourites = new ArrayList<>();
+
+        try {
+            favourites = fa.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        Log.d("fav_Async", "Voy a introducir los favs en BD");
+        for(String s:favourites)
+            wdb.insertFavourite(s);
+        Log.d("fav_Async", "Termine de introducir los datos en BD");
+
+        //Pido las estadísticas y las almaceno en la BD
+        WordStatsAsync wsa = new WordStatsAsync();
+        wsa.execute(token);
+        List<WordStat2> wordStats = new ArrayList<>();
+
+        try{
+            wordStats = wsa.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        for(WordStat2 ws:wordStats)
+        wdb.insertWordStat(ws);
+
+        wdb.close();
         Intent i = new Intent(contexto, MainActivity.class);
         i.putExtra("token",token);
         startActivity(i);
     }
 
-    private class WordTranslationsAsync extends AsyncTask<String, Integer, List<WordTranslation>>{
+    private class WordStatsAsync extends AsyncTask<String,Integer,List<WordStat2>>{
+        @Override
+        protected List<WordStat2> doInBackground(String... params) {
+            List<WordStat2> res = new ArrayList<>();
 
+            HttpClient hc = new DefaultHttpClient();
+            HttpGet get = new HttpGet(allWordStats_URI);
+            get.setHeader("Authentication", params[0]);
+
+            try {
+                HttpResponse resp = hc.execute(get);
+
+                String respStr = EntityUtils.toString(resp.getEntity());
+
+                //Construyo JSON a partir de la resp.
+                JSONArray respJSON = new JSONArray(respStr);
+                //Log.d("Resp_word_transl_JSON",respJSON.toString());
+                for(int i = 0;i<respJSON.length();i++){
+                    JSONObject j = respJSON.getJSONObject(i);
+                    res.add(new WordStat2(j.getString("word"), j.getInt("hits"), j.getInt("fails")));
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            return res;
+        }
+    }
+
+    private class FavouritesAsync extends AsyncTask<String,Integer,List<String>>{
+        @Override
+        protected List<String> doInBackground(String... params) {
+            HttpClient hc = new DefaultHttpClient();
+            HttpGet get = new HttpGet(allFavourites_URI);
+            get.setHeader("Authentication", params[0]);
+
+            List<String> res = new ArrayList<>();
+
+            Log.d("fav_Async", "Estoy dentro de fav.async");
+
+            try {
+                HttpResponse resp = hc.execute(get);
+
+                String respStr = EntityUtils.toString(resp.getEntity());
+
+                Log.d("fav_Async", "Respuesta recibida");
+
+                //Construyo JSON a partir de la resp.
+                JSONArray respJSON = new JSONArray(respStr);
+                //Log.d("Resp_word_transl_JSON",respJSON.toString());
+                for(int i = 0;i<respJSON.length();i++){
+                    JSONObject j = respJSON.getJSONObject(i);
+                    res.add(new String(j.getString("word")));
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            Log.d("fav_Async", "He salido de favAsync");
+            return res;
+        }
+    }
+
+    private class WordTranslationsAsync extends AsyncTask<String, Integer, List<WordTranslation>>{
         @Override
         protected List<WordTranslation> doInBackground(String... params) {
             HttpClient hc = new DefaultHttpClient();
@@ -144,12 +253,11 @@ public class Login extends ActionBarActivity {
 
             try {
                 HttpResponse resp = hc.execute(get);
-
                 String respStr = EntityUtils.toString(resp.getEntity());
 
                 //Construyo JSON a partir de la resp.
-
                 JSONArray respJSON = new JSONArray(respStr);
+                Log.d("Resp_word_transl_JSON",respJSON.toString());
                 for(int i = 0;i<respJSON.length();i++){
                     JSONObject j = respJSON.getJSONObject(i);
                     res.add(new WordTranslation(j.getString("wordSP"),j.getString("typeSP"),
