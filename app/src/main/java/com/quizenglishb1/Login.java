@@ -81,7 +81,12 @@ public class Login extends ActionBarActivity {
                     String token = resp.substring(22,resp.length());
                     Log.d("token", "-" + token);
 
-                    if(db.isEmpty()){
+                    db.deleteAll();
+                    db.addUser(userText.getText().toString(),passText.getText().toString(),token);
+                    db.updateToken(userText.getText().toString(),token);
+                    db.close();
+                    launchActivity(contexto,token);
+                    /*if(db.isEmpty()){
                         db.addUser(userText.getText().toString(),passText.getText().toString(),token);
                         db.updateToken(userText.getText().toString(),token);
                         db.close();
@@ -97,7 +102,7 @@ public class Login extends ActionBarActivity {
                         }else{
                             Toast.makeText(contexto,"Login failed. Please try again.", Toast.LENGTH_SHORT).show();
                         }
-                    }
+                    }*/
 
                     db.close();
 
@@ -151,7 +156,7 @@ public class Login extends ActionBarActivity {
             wdb.insertFavourite(s);
         Log.d("fav_Async", "Termine de introducir los datos en BD");
 
-        //Pido las estadísticas y las almaceno en la BD
+        //Pido las estadï¿½sticas y las almaceno en la BD
         WordStatsAsync wsa = new WordStatsAsync();
         wsa.execute(token);
         List<WordStat2> wordStats = new ArrayList<>();

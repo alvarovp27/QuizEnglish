@@ -14,6 +14,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.quizenglishb1.asynctasks.FavouritesOperationsAsync;
+import com.quizenglishb1.asynctasks.WordStatsOperationsAsync;
+import com.quizenglishb1.typesForJSON.WordStat2;
+import com.quizenglishb1.typesForJSON.WordTranslation;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -22,6 +27,7 @@ import org.apache.http.util.EntityUtils;
 import org.w3c.dom.Text;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -35,18 +41,17 @@ public class MainActivity extends ActionBarActivity {
     private Button play;
     private Button list;
     private Button tools;
+    private TextView sync;
+    private Button logout;
+
+    private Context contexto=this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Log.d("estoy_en_main_activity","Hola!");
-
-        final WordsDB db = new WordsDB(this);
-        db.close();
-
-        final Context contexto = this;
+        Log.d("estoy_en_main_activity", "Hola!");
 
         /** Obtengo el token que he recibido como extra*/
 
@@ -81,28 +86,23 @@ public class MainActivity extends ActionBarActivity {
             }
         }
 
-
         welcome = (TextView) findViewById(R.id.welcome);
         list = (Button) findViewById(R.id.list);
         tools = (Button) findViewById(R.id.tools);
-
-        /*final WordsDB myDB = new WordsDB(this);
-
-        Map<String,String> map = myDB.translateFromEnglish("get");
-
-        welcome.setText(map.toString());*/
+        sync = (TextView) findViewById(R.id.flag_sync);
         play = (Button) findViewById(R.id.playButton);
-
-
+        logout = (Button) findViewById(R.id.btn_logout);
         setTitle("English Quizz");
         //getActionBar().setBackgroundDrawable(new ColorDrawable());
+
+        checkSynchronized();
 
         play.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 Intent i = new Intent(contexto, GameSettings.class);
-                i.putExtra("token",USER_TOKEN);
+                i.putExtra("token", USER_TOKEN);
                 startActivity(i);
             }
         });
@@ -115,8 +115,17 @@ public class MainActivity extends ActionBarActivity {
                 startActivity(i);
             }
         });
-    }
 
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                UsersDB uDB = new UsersDB(contexto);
+                uDB.deleteAll();
+                Intent i = new Intent(contexto, Login.class);
+                startActivity(i);
+            }
+        });
+    }
 
     /** Comprueba si el token ha expirado */
     private class CheckToken extends AsyncTask<String,Integer,String>{
@@ -144,6 +153,41 @@ public class MainActivity extends ActionBarActivity {
             }
             return respStr;
         }
+    }
+
+    private void checkSynchronized(){
+        WordsDB db = new WordsDB(this);
+        List<WordTranslation> wtDirty = db.getAllWordTranslationsDirty();
+        List<String> fDirty = db.getAllFavouritesDirty();
+        List<WordStat2> wsDirty= db.getAllWordStatsDirty();
+        db.close();
+
+        if(!wtDirty.isEmpty() || !fDirty.isEmpty() || !wsDirty.isEmpty()){
+            sync.setText("NOT SYNCHRONIZED");
+            for(String s:fDirty){
+                FavouritesOperationsAsync foa = new FavouritesOperationsAsync(contexto);
+                foa.execute(s,"add",USER_TOKEN);
+                //necesito otro para cuando se borran palabras favs.
+            }
+            for(WordStat2 ws : wsDirty){
+                WordStatsOperationsAsync wsoa = new WordStatsOperationsAsync(contexto);
+                wsoa.execute(ws.getWord(),""+ws.getHits(),""+ws.getFails(),USER_TOKEN);
+            }
+
+            db = new WordsDB(this);
+            wtDirty = db.getAllWordTranslationsDirty();
+            fDirty = db.getAllFavouritesDirty();
+            wsDirty= db.getAllWordStatsDirty();
+            db.close();
+            if(wtDirty.isEmpty() && fDirty.isEmpty() & wsDirty.isEmpty())
+                sync.setText("All DB are synchronized");
+        }else
+            sync.setText("All BD are synchronized");
+    }
+
+    public void onResume() {  // After a pause OR at startup
+        super.onResume();
+        checkSynchronized();
     }
 
 

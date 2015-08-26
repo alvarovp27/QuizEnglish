@@ -85,7 +85,7 @@ public class Play extends ActionBarActivity {
                     isCorrect.setText("OK!");
 
                     WordsDB db = new WordsDB(context);
-                    db.addHit(wordEnglish.getText().toString(),USER_TOKEN);
+                    db.addHit(wordEnglish.getText().toString(),USER_TOKEN,context);
                     db.close();
 
                     right++;
@@ -93,7 +93,7 @@ public class Play extends ActionBarActivity {
                     isCorrect.setText("Wrong\nThe correct answer for "+questions.get(wordCount).get(0));
 
                     WordsDB db = new WordsDB(context);
-                    db.addFail(wordEnglish.getText().toString(),USER_TOKEN);
+                    db.addFail(wordEnglish.getText().toString(),USER_TOKEN,context);
                     db.close();
 
                     if(questions.get(wordCount).size()>2)

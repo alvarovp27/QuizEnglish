@@ -1,7 +1,10 @@
 package com.quizenglishb1.asynctasks;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+
+import com.quizenglishb1.WordsDB;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -19,6 +22,10 @@ import java.io.UnsupportedEncodingException;
  * Created by Alvaro on 25/08/2015.
  */
 public class FavouritesOperationsAsync extends AsyncTask<String,Integer,Void>{
+    private Context context;
+    public FavouritesOperationsAsync(Context context){
+        this.context=context;
+    }
 
     private static String URI = "http://quiztionary-api.appspot.com/api/words/favs";
 
@@ -79,7 +86,14 @@ public class FavouritesOperationsAsync extends AsyncTask<String,Integer,Void>{
             }
 
         }
+
         Log.d("exito-fav",exito);
+        WordsDB db = new WordsDB(context);
+        if(exito.equals("FAIL"))
+            db.setFavouriteDirty(word,true);
+        else
+            db.setFavouriteDirty(word,false);
+        db.close();
         return null;
     }
 }

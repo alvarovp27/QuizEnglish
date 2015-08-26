@@ -28,10 +28,12 @@ public class WordsDB extends SQLiteOpenHelper{
             "typeSP TEXT," +
             "wordEN TEXT," +
             "typeEN TEXT," +
-            "category TEXT)";
+            "category TEXT," +
+            "dirty INTEGER DEFAULT 0)";
 
     private String createFAVOURITES = "CREATE TABLE IF NOT EXISTS FAVOURITES"+
-            "(wordEN TEXT)";
+            "(wordEN TEXT," +
+            "dirty INTEGER DEFAULT 0)";
 
     private String createFAVOURITESSP = "CREATE TABLE IF NOT EXISTS FAVOURITESSP"+
             "(wordSP TEXT)";
@@ -39,7 +41,8 @@ public class WordsDB extends SQLiteOpenHelper{
     private String createWORDSTATS = "CREATE TABLE IF NOT EXISTS WORDSTATS"+
             "(word TEXT," +
             "hits INTEGER," +
-            "fails INTEGER)";
+            "fails INTEGER," +
+            "dirty INTEGER DEFAULT 0)";
 
     private String createCATEGORYS = "CREATE TABLE IF NOT EXISTS CATEGORIES"+
             "(name TEXT)";
@@ -884,6 +887,7 @@ public class WordsDB extends SQLiteOpenHelper{
      * Añade a la base de datos la palabra que recibe como parámetro (spanish) y le
      * asocia las traducciones indicadas en el Map<String,String>
      * */
+    @Deprecated
     public void addTranslationsFromSpanish(CoupleString spanish,Map<String,String> english){
         Map<String,String> englishOnDB = translateFromSpanish(spanish);
         SQLiteDatabase db = getWritableDatabase();
@@ -898,6 +902,7 @@ public class WordsDB extends SQLiteOpenHelper{
         db.close();
     }
 
+    @Deprecated
     public void addTranslationFromEnglish(CoupleString english, Map<String,String> spanish){
         Map<String,String> spanishOnDB=translateFromEnglish(english);
         SQLiteDatabase db = getWritableDatabase();
@@ -933,34 +938,33 @@ public class WordsDB extends SQLiteOpenHelper{
         return res;
     }
 
-    public void addFavouriteEn(String word, String token){
+    public void addFavouriteEn(String word, String token, Context context){
         SQLiteDatabase db = getWritableDatabase();
-        db.execSQL("INSERT INTO FAVOURITES VALUES('" + word + "')");
+        db.execSQL("INSERT INTO FAVOURITES VALUES('" + word + "', 0)");
         db.close();
-        FavouritesOperationsAsync foa = new FavouritesOperationsAsync();
-        foa.execute(word,"add",token);
+        FavouritesOperationsAsync foa = new FavouritesOperationsAsync(context);
+        foa.execute(word, "add", token);
     }
 
-    public void removeFavouriteEn(String word, String token){
+    public void removeFavouriteEn(String word, String token, Context context){
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL("DELETE FROM FAVOURITES WHERE wordEN = '" + word + "'");
         db.close();
-        FavouritesOperationsAsync foa = new FavouritesOperationsAsync();
+        FavouritesOperationsAsync foa = new FavouritesOperationsAsync(context);
         foa.execute(word, "remove", token);
     }
 
 
     /**METHODS RELATED WITH THE WORDSTATS TABLE*/
-    public void addHit(String word, String token){
+    public void addHit(String word, String token, Context context){
         SQLiteDatabase dbR = getReadableDatabase();
         SQLiteDatabase dbW = getWritableDatabase();
         Cursor cursor = dbR.rawQuery("SELECT * FROM WORDSTATS WHERE word='"+word+"'",null);
         if(cursor.getCount()==0){ //Esto es porque la palabra aún no apareció en ningún juego
-            dbW.execSQL("INSERT INTO WORDSTATS VALUES ('"+word+"', 1, 0)");
+            dbW.execSQL("INSERT INTO WORDSTATS VALUES ('"+word+"', 1, 0, 0)");
         } else {
             dbW.execSQL("UPDATE WORDSTATS SET hits = hits + 1 WHERE word = '"+word+"'");
         }
-
 
         //Sacar el número de hits y fails mediante consulta
         cursor = dbR.rawQuery("SELECT * FROM WORDSTATS WHERE word='"+word+"'",null);
@@ -971,16 +975,16 @@ public class WordsDB extends SQLiteOpenHelper{
         dbR.close();
         dbW.close();
         //crear la asynctask y pasarle word, hits y fails
-        WordStatsOperationsAsync woa = new WordStatsOperationsAsync();
+        WordStatsOperationsAsync woa = new WordStatsOperationsAsync(context);
         woa.execute(word,""+hits,""+fails,token);
     }
 
-    public void addFail(String word, String token){
+    public void addFail(String word, String token,Context context){
         SQLiteDatabase dbR = getReadableDatabase();
         SQLiteDatabase dbW = getWritableDatabase();
         Cursor cursor = dbR.rawQuery("SELECT * FROM WORDSTATS WHERE word='"+word+"'",null);
         if(cursor.getCount()==0){ //Esto es porque la palabra aún no apareció en ningún juego
-            dbW.execSQL("INSERT INTO WORDSTATS VALUES ('"+word+"', 0, 1)");
+            dbW.execSQL("INSERT INTO WORDSTATS VALUES ('"+word+"', 0, 1, 0)");
         } else {
             dbW.execSQL("UPDATE WORDSTATS SET fails = fails + 1 WHERE word = '"+word+"'");
         }
@@ -994,7 +998,7 @@ public class WordsDB extends SQLiteOpenHelper{
         dbR.close();
         dbW.close();
         //crear la asynctask y pasarle word, hits y fails
-        WordStatsOperationsAsync woa = new WordStatsOperationsAsync();
+        WordStatsOperationsAsync woa = new WordStatsOperationsAsync(context);
         woa.execute(word, "" + hits, "" + fails, token);
     }
 
@@ -1002,7 +1006,7 @@ public class WordsDB extends SQLiteOpenHelper{
         List<WordStat> res = new ArrayList<>();
 
         SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM WORDSTATS WHERE hits > fails AND hits > 0 ORDER BY (hits - fails) ASC",null);
+        Cursor cursor = db.rawQuery("SELECT * FROM WORDSTATS WHERE hits > fails AND hits > 0 ORDER BY (hits - fails) DESC",null);
 
         while(cursor.moveToNext()){
             List<Word> aux = getWordFromEn(cursor.getString(0));
@@ -1023,7 +1027,7 @@ public class WordsDB extends SQLiteOpenHelper{
         List<WordStat> res = new ArrayList<>();
 
         SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM WORDSTATS WHERE fails > hits AND fails > 0 ORDER BY (fails - hits) ASC",null);
+        Cursor cursor = db.rawQuery("SELECT * FROM WORDSTATS WHERE fails > hits AND fails > 0 ORDER BY (fails - hits) DESC",null);
 
         while(cursor.moveToNext()){
             List<Word> aux = getWordFromEn(cursor.getString(0));
@@ -1031,9 +1035,7 @@ public class WordsDB extends SQLiteOpenHelper{
                 WordStat ws = WordStat.create(w.getMainWord(),w.getTranslations(),w.getType(),new Integer(cursor.getString(1)), new Integer(cursor.getString(2)));
                 res.add(ws);
             }
-
         }
-
         cursor.close();
         db.close();
 
@@ -1053,23 +1055,88 @@ public class WordsDB extends SQLiteOpenHelper{
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL("INSERT INTO WORDTRANSLATIONS VALUES('" + wt.getWordSP() + "', '" +
                 wt.getTypeSP() + "', '" + wt.getWordEN() + "', '" + wt.getTypeEN() + "', '" +
-                wt.getCategory() + "')");
+                wt.getCategory() + "', 0)");
         db.close();
     }
 
     public void insertFavourite(String word){
         SQLiteDatabase db = getWritableDatabase();
-        db.execSQL("INSERT INTO FAVOURITES VALUES('"+word+"')");
+        db.execSQL("INSERT INTO FAVOURITES VALUES('"+word+"', 0)");
         db.close();
     }
 
     public void insertWordStat(WordStat2 ws){
-
-
-
         SQLiteDatabase db = getWritableDatabase();
-        db.execSQL("INSERT INTO WORDSTATS VALUES('"+ws.getWord()+"', '"+ws.getHits()+"', '"+ws.getFails()+"')");
+        db.execSQL("INSERT INTO WORDSTATS VALUES('"+ws.getWord()+"', '"+ws.getHits()+"', '"+ws.getFails()+"', 0)");
         db.close();
     }
 
+    public void setWordTranslationDirty(WordTranslation wt, boolean dirty){
+        int dirtyInt = 0;
+        if(dirty)
+            dirtyInt=1;
+        SQLiteDatabase db = getWritableDatabase();
+        db.execSQL("UPDATE WORDTRANSLATIONS SET dirty="+dirtyInt+" " +
+                "WHERE wordSP='"+wt.getWordSP()+"' AND typeSP='"+wt.getTypeSP()
+                +"' AND wordEN='"+wt.getWordEN()+"' AND typeEN='"+wt.getTypeEN()
+                +"' AND category='"+wt.getCategory()+"'");
+        db.close();
+    }
+
+    public void setFavouriteDirty(String fav, boolean dirty){
+        int dirtyInt = 0;
+        if(dirty)
+            dirtyInt=1;
+        SQLiteDatabase db = getWritableDatabase();
+        db.execSQL("UPDATE FAVOURITES SET dirty="+dirtyInt+" " +
+                "WHERE wordEN = '"+fav+"'");
+        db.close();
+    }
+
+    public void setWordStatDirty(WordStat2 ws, boolean dirty){
+        int dirtyInt = 0;
+        if(dirty)
+            dirtyInt=1;
+        SQLiteDatabase db = getWritableDatabase();
+        db.execSQL("UPDATE WORDSTATS SET dirty="+dirtyInt+" " +
+                "WHERE word='"+ws.getWord()+"'");
+        db.close();
+    }
+
+    public List<WordTranslation> getAllWordTranslationsDirty(){
+        List<WordTranslation> res = new ArrayList<>();
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor c = db.rawQuery("SELECT * FROM WORDTRANSLATIONS WHERE dirty=1",null);
+
+        //public WordTranslation(String wordSP, String typeSP, String wordEN, String typeEN, String category)
+        while(c.moveToNext())
+            res.add(new WordTranslation(c.getString(0),c.getString(1),c.getString(2),c.getString(3),c.getString(4)));
+        c.close();
+        db.close();
+        return res;
+    }
+
+    public List<String> getAllFavouritesDirty(){
+        List<String> res = new ArrayList<>();
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor c = db.rawQuery("SELECT * FROM FAVOURITES WHERE dirty=1",null);
+        while(c.moveToNext())
+            res.add(c.getString(0));
+        c.close();
+        db.close();
+        return res;
+    }
+
+    public List<WordStat2> getAllWordStatsDirty(){
+        List<WordStat2> res = new ArrayList<>();
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor c = db.rawQuery("SELECT * FROM WORDSTATS WHERE dirty=1",null);
+
+        //public WordStat2(String word, int hits, int fails)
+        while(c.moveToNext())
+            res.add(new WordStat2(c.getString(0),new Integer(c.getString(1)),new Integer(c.getString(2))));
+        c.close();
+        db.close();
+        return res;
+    }
 }

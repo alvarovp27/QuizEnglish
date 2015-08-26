@@ -124,14 +124,14 @@ public class WordListAdapter extends BaseAdapter{
                     public void onClick(View v) {
                         if (favList.contains(word)) {
                             WordsDB db = new WordsDB(context);
-                            db.removeFavouriteEn(word.getMainWord(), token);
+                            db.removeFavouriteEn(word.getMainWord(), token, context);
                             favList = db.getAllFavouritesEn();
                             db.close();
                             favButton.setImageResource(R.drawable.ic_non_fav);
                             notifyDataSetChanged(); //Refresca la ListView tras cambiar algún elemento
                         } else {
                             WordsDB db = new WordsDB(context);
-                            db.addFavouriteEn(word.getMainWord(), token);
+                            db.addFavouriteEn(word.getMainWord(), token, context);
                             favList = db.getAllFavouritesEn();
                             db.close();
                             favButton.setImageResource(R.drawable.ic_fav);
@@ -168,14 +168,14 @@ public class WordListAdapter extends BaseAdapter{
                     public void onClick(View v) {
                         if (favList.contains(favouriteWord)) {
                             WordsDB db = new WordsDB(context);
-                            db.removeFavouriteEn(favouriteWord.getMainWord(), token);
+                            db.removeFavouriteEn(favouriteWord.getMainWord(), token, context);
                             favList = db.getAllFavouritesEn();
                             db.close();
                             favButton.setImageResource(R.drawable.ic_non_fav);
                             notifyDataSetChanged(); //Refresca la ListView tras cambiar algún elemento
                         } else {
                             WordsDB db = new WordsDB(context);
-                            db.addFavouriteEn(favouriteWord.getMainWord(), token);
+                            db.addFavouriteEn(favouriteWord.getMainWord(), token, context);
                             favList = db.getAllFavouritesEn();
                             db.close();
                             favButton.setImageResource(R.drawable.ic_fav);
@@ -215,14 +215,14 @@ public class WordListAdapter extends BaseAdapter{
                     public void onClick(View v) {
                         if (favList.contains(wAux2)) {
                             WordsDB db = new WordsDB(context);
-                            db.removeFavouriteEn(bestWord.getMainWord(), token);
+                            db.removeFavouriteEn(bestWord.getMainWord(), token, context);
                             favList = db.getAllFavouritesEn();
                             db.close();
                             favButton.setImageResource(R.drawable.ic_non_fav);
                             notifyDataSetChanged(); //Refresca la ListView tras cambiar algún elemento
                         } else {
                             WordsDB db = new WordsDB(context);
-                            db.addFavouriteEn(bestWord.getMainWord(), token);
+                            db.addFavouriteEn(bestWord.getMainWord(), token, context);
                             favList = db.getAllFavouritesEn();
                             db.close();
                             favButton.setImageResource(R.drawable.ic_fav);
@@ -267,14 +267,14 @@ public class WordListAdapter extends BaseAdapter{
                     public void onClick(View v) {
                         if (favList.contains(wAux)) {
                             WordsDB db = new WordsDB(context);
-                            db.removeFavouriteEn(worstWord.getMainWord(), token);
+                            db.removeFavouriteEn(worstWord.getMainWord(), token, context);
                             favList = db.getAllFavouritesEn();
                             db.close();
                             favButton.setImageResource(R.drawable.ic_non_fav);
                             notifyDataSetChanged(); //Refresca la ListView tras cambiar algún elemento
                         } else {
                             WordsDB db = new WordsDB(context);
-                            db.addFavouriteEn(worstWord.getMainWord(), token);
+                            db.addFavouriteEn(worstWord.getMainWord(), token, context);
                             favList = db.getAllFavouritesEn();
                             db.close();
                             favButton.setImageResource(R.drawable.ic_fav);

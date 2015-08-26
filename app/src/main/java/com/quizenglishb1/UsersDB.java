@@ -68,4 +68,10 @@ public class UsersDB extends SQLiteOpenHelper {
         db.close();
     }
 
+    public void deleteAll(){
+        SQLiteDatabase db = getWritableDatabase();
+        db.execSQL("DELETE FROM USERS");
+        db.close();
+    }
+
 }

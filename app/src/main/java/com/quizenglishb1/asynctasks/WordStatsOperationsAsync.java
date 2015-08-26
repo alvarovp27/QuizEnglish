@@ -1,8 +1,12 @@
 package com.quizenglishb1.asynctasks;
 
+import android.content.Context;
 import android.content.Entity;
 import android.os.AsyncTask;
 import android.util.Log;
+
+import com.quizenglishb1.WordsDB;
+import com.quizenglishb1.typesForJSON.WordStat2;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -22,6 +26,12 @@ import java.io.UnsupportedEncodingException;
  */
 public class WordStatsOperationsAsync extends AsyncTask<String, Integer, Void>{
     private static String URI = "http://quiztionary-api.appspot.com/api/words/stats";
+    private Context context;
+
+    public WordStatsOperationsAsync(Context context){
+        this.context=context;
+    }
+
     @Override
     protected Void doInBackground(String... params) {
         String exito = "FAIL"; //banderín para determinar si las operaciones tuvieron éxito
@@ -70,6 +80,13 @@ public class WordStatsOperationsAsync extends AsyncTask<String, Integer, Void>{
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        WordsDB db = new WordsDB(context);
+        if(exito.equals("FAIL"))
+            db.setWordStatDirty(new WordStat2(word,hits,fails), true);
+        else
+            db.setWordStatDirty(new WordStat2(word,hits,fails), false);
+        db.close();
 
         return null;
     }
