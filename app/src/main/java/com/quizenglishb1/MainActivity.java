@@ -54,8 +54,8 @@ public class MainActivity extends ActionBarActivity {
         Log.d("estoy_en_main_activity", "Hola!");
 
         /** Obtengo el token que he recibido como extra*/
-
-        USER_TOKEN = getIntent().getStringExtra("token");
+        if(getIntent().getStringExtra("token")!=null)
+            USER_TOKEN = getIntent().getStringExtra("token");
 
 
         /** Compruebo si hay usuarios registrados en el local, y si es así,

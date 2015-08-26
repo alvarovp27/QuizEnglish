@@ -25,6 +25,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -203,7 +204,7 @@ public class Login extends ActionBarActivity {
             try {
                 HttpResponse resp = hc.execute(get);
 
-                String respStr = EntityUtils.toString(resp.getEntity());
+                String respStr = EntityUtils.toString(resp.getEntity(), HTTP.UTF_8);
 
                 //Construyo JSON a partir de la resp.
                 JSONArray respJSON = new JSONArray(respStr);
@@ -237,7 +238,7 @@ public class Login extends ActionBarActivity {
             try {
                 HttpResponse resp = hc.execute(get);
 
-                String respStr = EntityUtils.toString(resp.getEntity());
+                String respStr = EntityUtils.toString(resp.getEntity(), HTTP.UTF_8);
 
                 Log.d("fav_Async", "Respuesta recibida");
 
@@ -271,7 +272,8 @@ public class Login extends ActionBarActivity {
 
             try {
                 HttpResponse resp = hc.execute(get);
-                String respStr = EntityUtils.toString(resp.getEntity());
+
+                String respStr = EntityUtils.toString(resp.getEntity(), HTTP.UTF_8);
 
                 //Construyo JSON a partir de la resp.
                 JSONArray respJSON = new JSONArray(respStr);
