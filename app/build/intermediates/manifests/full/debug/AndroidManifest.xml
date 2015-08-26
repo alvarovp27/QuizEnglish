@@ -48,6 +48,10 @@
             android:name="com.quizenglishb1.Login"
             android:label="@string/title_activity_login" >
         </activity>
+        <activity
+            android:name="com.quizenglishb1.SignIn"
+            android:label="@string/title_activity_sign_in" >
+        </activity>
     </application>
 
 </manifest>

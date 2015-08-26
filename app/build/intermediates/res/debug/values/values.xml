@@ -226,6 +226,7 @@
     <string name="title_activity_login">Login</string>
     <string name="title_activity_play">Play</string>
     <string name="title_activity_result">Result</string>
+    <string name="title_activity_sign_in">SignIn</string>
     <string name="title_activity_summary_list">SummaryList</string>
     <string name="title_activity_word_list">WordList</string>
     <!-- From: file:/C:/Users/Alvaro/Android_WS/QuizEnglishB1/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/res/values/values.xml -->

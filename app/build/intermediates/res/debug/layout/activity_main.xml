@@ -23,7 +23,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="225dp"
+        android:layout_marginTop="200dp"
         android:layout_below="@id/welcome">
 
         <Button
@@ -61,9 +61,22 @@
     </RelativeLayout>
     <TextView
         android:id="@+id/flag_sync"
+        android:text="fdsafsdafds"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/buttons"
-        android:layout_alignParentLeft="true"/>
+        android:layout_alignBottom="@+id/btn_logout"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+    <Button
+        android:layout_width="100dp"
+        android:layout_height="30dp"
+        android:text="Log out"
+        android:id="@+id/btn_logout"
+        android:background="@drawable/buttonshape"
+        android:layout_below="@id/buttons"
+        android:layout_alignRight="@+id/buttons"
+        android:layout_alignEnd="@+id/buttons"
+        android:layout_marginRight="40dp"
+        android:layout_marginTop="25dp"/>
 </RelativeLayout>
 <!-- From: file:/C:/Users/Alvaro/Android_WS/QuizEnglishB1/app/src/main/res/layout/activity_main.xml -->

@@ -47,6 +47,7 @@ public class Login extends ActionBarActivity {
     private EditText userText;
     private EditText passText;
     private Button  loginBtn;
+    private Button signinBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,8 +57,20 @@ public class Login extends ActionBarActivity {
         userText = (EditText) findViewById(R.id.login_username);
         passText = (EditText) findViewById(R.id.login_password);
         loginBtn = (Button) findViewById(R.id.login_button);
+        signinBtn = (Button) findViewById(R.id.btn_to_signin);
 
         final Context contexto = this;
+
+        if(getIntent().getStringExtra("registered")!=null)
+            Toast.makeText(getApplicationContext(),getIntent().getStringExtra("registered"),Toast.LENGTH_LONG).show();
+
+        signinBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(contexto, SignIn.class);
+                startActivity(i);
+            }
+        });
 
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,7 +87,7 @@ public class Login extends ActionBarActivity {
                     e.printStackTrace();
                 }
                 Log.d("resp_login", "-" + resp);
-                if(resp.equals("FAILED") || resp.equals("Bad login")){
+                if(resp.equals("FAILED") || resp.equals("Bad login") || resp.equals("NULL")){
                     Toast.makeText(contexto,"Login failed. Please try again.", Toast.LENGTH_SHORT).show();
                 } else {
                     UsersDB db = new UsersDB(contexto);
@@ -277,7 +290,6 @@ public class Login extends ActionBarActivity {
             return res;
         }
     }
-
 
     private class LoginAsync extends AsyncTask<String,Integer,String> {
         @Override
