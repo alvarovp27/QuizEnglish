@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import com.quizenglishb1.asynctasks.FavouritesOperationsAsync;
 import com.quizenglishb1.asynctasks.WordStatsOperationsAsync;
@@ -813,6 +814,7 @@ public class WordsDB extends SQLiteOpenHelper{
 
     /**Devuelve todas las palabras existentes en la BD organizadas de la siguiente manera:
      * palabra en inglés - traducciones al español. */
+    @Deprecated
     public List<List<String>> getAllClasified(){
         List<List<String>> res = new ArrayList<>();
         List<String> showed = new ArrayList<>();
@@ -831,17 +833,26 @@ public class WordsDB extends SQLiteOpenHelper{
 
     /**Devuelve todas las palabras existentes, desde el inglés y sus traducciones al español.
      * Están clasificadas según el tipo de palabra*/
-    public List<Word> getAllEnglishWords(){
+    public List<Word> getAllEnglishWords(List<String> categories){
         List<Word> res = new ArrayList<>();
 
+        String whereCategory = "";
+        for(String s:categories){
+            if(whereCategory.equals(""))
+                whereCategory=" WHERE category='"+s+"'";
+            else
+                whereCategory+=" category='"+s+"'";
+        }
+
         SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM WORDTRANSLATIONS ORDER BY wordEN, typeEN ASC",null);
+        Cursor cursor = db.rawQuery("SELECT * FROM WORDTRANSLATIONS"+whereCategory+" ORDER BY wordEN, typeEN ASC",null);
 
         while(cursor.moveToNext()){
             String english = cursor.getString(2);
             String type = cursor.getString(3);
+            String category = cursor.getString(4);
 
-            Word word = Word.create(english,type);
+            Word word = Word.create(english,type,category);
 
             if(res.contains(word))
                 res.get(res.size()-1).addTranslation(Word.create(cursor.getString(0), cursor.getString(1)));
@@ -857,6 +868,7 @@ public class WordsDB extends SQLiteOpenHelper{
         return res;
     }
 
+    /** Devuelve la lista de tipos de palabras que recibe como parámetro con sus respectivas traducciones */
     public List<Word> getWordFromEn(String word){
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM WORDTRANSLATIONS WHERE wordEN ='" + word + "' ORDER BY wordEN,typeEN ASC", null);
@@ -879,7 +891,7 @@ public class WordsDB extends SQLiteOpenHelper{
 
         cursor.close();
         db.close();
-
+        Log.d("getWordFromEn",res.toString());
         return res;
     }
 
@@ -1014,7 +1026,6 @@ public class WordsDB extends SQLiteOpenHelper{
                 WordStat ws = WordStat.create(w.getMainWord(),w.getTranslations(),w.getType(),new Integer(cursor.getString(1)), new Integer(cursor.getString(2)));
                 res.add(ws);
             }
-
         }
 
         cursor.close();
@@ -1137,6 +1148,20 @@ public class WordsDB extends SQLiteOpenHelper{
             res.add(new WordStat2(c.getString(0),new Integer(c.getString(1)),new Integer(c.getString(2))));
         c.close();
         db.close();
+        return res;
+    }
+
+    /**Método para cargar las categorías*/
+    public List<String> loadCategories(){
+        List<String> res = new ArrayList<>();
+        SQLiteDatabase rdb = getReadableDatabase();
+        //Cursor c1 = rdb.rawQuery("SELECT DISTINCT category FROM WORDTRANSLATIONS", null);
+        Cursor c1 = rdb.query(true, "WORDTRANSLATIONS", new String[]{"category"}, null, null, "category", null, null, null);
+
+        while(c1.moveToNext())
+            if(!res.contains(c1.getString(0)))
+                res.add(c1.getString(0));
+        Log.d("categorias",res.toString());
         return res;
     }
 }

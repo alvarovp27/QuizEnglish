@@ -8,8 +8,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class GameSettings extends ActionBarActivity {
@@ -31,6 +37,19 @@ public class GameSettings extends ActionBarActivity {
         home = (Button) findViewById(R.id.home_button_settings);
         nQuestionsEdit = (EditText) findViewById(R.id.number_of_questions);
 
+        final LinearLayout checkBoxList = (LinearLayout) findViewById(R.id.checkList);
+        //checkBoxList.setVerticalScrollBarEnabled(true);
+
+        WordsDB db = new WordsDB(context);
+        List<String> categories = db.loadCategories();
+        final List<CheckBox> checkBoxes = new ArrayList<>();
+        for(String s:categories) {
+            CheckBox aux = new CheckBox(context);
+            aux.setText(s);
+            checkBoxList.addView(aux);
+            checkBoxes.add(aux);
+        }
+
         home.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -43,6 +62,12 @@ public class GameSettings extends ActionBarActivity {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(context, Play.class);
+
+                List<String> categories = new ArrayList<String>();
+                for(CheckBox cb:checkBoxes)
+                    if(cb.isChecked())
+                        categories.add(cb.getText().toString());
+
                 if(nQuestionsEdit.getText().toString().matches("") || nQuestionsEdit.getText().toString()=="0")
                     Toast.makeText(context, "You must insert a number of questions", Toast.LENGTH_SHORT).show();
                 else {
@@ -57,6 +82,7 @@ public class GameSettings extends ActionBarActivity {
                     else{
                         i.putExtra("nQuestions",nQuestions);
                         i.putExtra("token",getIntent().getStringExtra("token"));
+                        i.putExtra("categories", (Serializable) categories);
                         startActivity(i);
                     }
                 }

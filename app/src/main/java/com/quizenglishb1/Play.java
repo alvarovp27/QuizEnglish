@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.quizenglishb1.com.quizenglishb1.utilities.Answer;
 import com.quizenglishb1.com.quizenglishb1.utilities.Randoms;
+import com.quizenglishb1.com.quizenglishb1.utilities.Word;
 
 import org.w3c.dom.Text;
 
@@ -35,8 +36,10 @@ public class Play extends ActionBarActivity {
     private TextView isCorrect;
     private TextView count;
 
+    private List<String> categories = new ArrayList<>();
+
     private int wordCount = 0;
-    private List<List<String>> questions = new ArrayList<>();
+    private List<Word> questions = new ArrayList<>();
 
     private List<Answer> answers= new ArrayList<>();
     private int right = 0;
@@ -64,24 +67,29 @@ public class Play extends ActionBarActivity {
         listWords.setMovementMethod(new ScrollingMovementMethod());
 
         total = getIntent().getIntExtra("nQuestions",10);
+        if(getIntent().getSerializableExtra("categories")!=null)
+            categories = (List<String>) getIntent().getSerializableExtra("categories");
 
+        //Carga las preguntas
         loadQuestions();
 
-        wordEnglish.setText(questions.get(wordCount).get(wordCount));
+       // wordEnglish.setText(questions.get(wordCount).get(wordCount));
+        wordEnglish.setText(questions.get(wordCount).getMainWord());
 
         count.setText("Question 1 of "+total);
+
 
         sendWord.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                List<String> englishWords = new ArrayList<String>();
-                for(int i=1; i<questions.get(wordCount).size();i++)
-                    englishWords.add(questions.get(wordCount).get(i));
+                List<String> translations = new ArrayList<String>();
+                for(int i=0; i<questions.get(wordCount).getTranslations().size();i++)
+                    translations.add(questions.get(wordCount).getTranslations().get(i).getMainWord());
 
-                answers.add(new Answer(questions.get(wordCount).get(0),wordSpanish.getText().toString(),englishWords));
+                answers.add(new Answer(questions.get(wordCount).getMainWord(),wordSpanish.getText().toString(),translations));
 
-                if(questions.get(wordCount).contains(wordSpanish.getText().toString())){
+                if(questions.get(wordCount).getTranslations().contains(wordSpanish.getText().toString())){
                     isCorrect.setText("OK!");
 
                     WordsDB db = new WordsDB(context);
@@ -90,29 +98,29 @@ public class Play extends ActionBarActivity {
 
                     right++;
                 }else{
-                    isCorrect.setText("Wrong\nThe correct answer for "+questions.get(wordCount).get(0));
+                    isCorrect.setText("Wrong\nThe correct answer for "+questions.get(wordCount).getMainWord());
 
                     WordsDB db = new WordsDB(context);
-                    db.addFail(wordEnglish.getText().toString(),USER_TOKEN,context);
+                    db.addFail(wordEnglish.getText().toString(), USER_TOKEN, context);
                     db.close();
 
-                    if(questions.get(wordCount).size()>2)
+                    if(questions.get(wordCount).getTranslations().size()>2)
                         isCorrect.append(" are");
                     else
                         isCorrect.append(" is");
 
-                    for(int i = 1;i<questions.get(wordCount).size();i++)
-                        if(i==questions.get(wordCount).size()-1)
-                            isCorrect.append(" "+questions.get(wordCount).get(i)+".");
+                    for(int i = 0;i<questions.get(wordCount).getTranslations().size();i++)
+                        if(i==questions.get(wordCount).getTranslations().size()-1)
+                            isCorrect.append(" "+questions.get(wordCount).getTranslations().get(i).getMainWord()+".");
                           else
-                            isCorrect.append(" "+questions.get(wordCount).get(i)+",");
+                            isCorrect.append(" "+questions.get(wordCount).getTranslations().get(i).getMainWord()+",");
                     wrong++;
                 }
 
                 //Pasa a la siguiente pregunta
                 if(wordCount!=total-1){
                     wordCount++;
-                    wordEnglish.setText(questions.get(wordCount).get(0));
+                    wordEnglish.setText(questions.get(wordCount).getMainWord());
                     wordSpanish.setText("");
                     count.setText("Question "+(wordCount+1)+" of "+total);
                 } else {
@@ -132,14 +140,37 @@ public class Play extends ActionBarActivity {
     }
 
     private void loadQuestions(){
-        final WordsDB db = new WordsDB(this);
+        /*final WordsDB db = new WordsDB(this);
         List<List<String>> allClasified = db.getAllClasified();
         db.close();
 
         for(int i = 0;i<total;i++){
             int random = Randoms.randomInt(allClasified.size()-1);
             questions.add(allClasified.get(random));
+        }*/
+
+        final WordsDB db = new WordsDB(this);
+        //List<List<String>> allClasified = db.getAllClasified();
+        List<Word> allWords = db.getAllEnglishWords(/*categories*/new ArrayList<String>());
+        db.close();
+
+        List<Word> allWordsByCategory = new ArrayList<>();
+        if(!categories.isEmpty()) {
+            for (Word w : allWords)
+                if (categories.contains(w.getCategory()))
+                    allWordsByCategory.add(w);
+        }else
+            allWordsByCategory.addAll(allWords);
+
+        if(total>allWordsByCategory.size())
+            total=allWordsByCategory.size();
+
+        for(int i = 0;i<total;i++){
+            int random = Randoms.randomInt(allWordsByCategory.size()-1);
+            if(!questions.contains(allWordsByCategory.get(random)))
+                questions.add(allWordsByCategory.get(random));
         }
+
     }
 
 

@@ -11,7 +11,7 @@ public class WordStat extends Word{
     private Integer fails;
 
     protected WordStat(String mainWord, List<Word> translations, String type, Integer hits, Integer fails){
-        super(mainWord,translations,type);
+        super(mainWord,translations,type,null);
 
         this.hits=hits;
         this.fails=fails;

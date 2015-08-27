@@ -11,10 +11,12 @@ public class Word {
     private String mainWord;
     private List<Word> translations;
     private String type;
+    private String category;
 
-    protected Word(String mainWord, List<Word> translations, String type){
+    protected Word(String mainWord, List<Word> translations, String type, String category){
         this.mainWord=mainWord;
         this.type=type;
+        this.category=category;
 
         if(translations!=null)
             this.translations = new ArrayList<>(translations);
@@ -22,12 +24,16 @@ public class Word {
             this.translations = new ArrayList<>();
     }
 
-    public static Word create(String mainWord, List<Word> translations, String type){
-        return new Word(mainWord,translations,type);
+    public static Word create(String mainWord, List<Word> translations, String type, String category){
+        return new Word(mainWord,translations,type,category);
+    }
+
+    public static Word create(String mainWord,String type, String category){
+        return new Word(mainWord,null,type,category);
     }
 
     public static Word create(String mainWord,String type){
-        return new Word(mainWord,null,type);
+        return new Word(mainWord,null,type,null);
     }
 
     public String getMainWord(){
@@ -45,6 +51,8 @@ public class Word {
     public void addTranslation(Word word){
         translations.add(word);
     }
+
+    public String getCategory(){return category;}
 
     @Override
     public boolean equals(Object o) {

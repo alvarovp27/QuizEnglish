@@ -34,7 +34,7 @@ public class WordStatsOperationsAsync extends AsyncTask<String, Integer, Void>{
 
     @Override
     protected Void doInBackground(String... params) {
-        String exito = "FAIL"; //banderín para determinar si las operaciones tuvieron éxito
+        String exito = "FAIL"; //banderin para determinar si las operaciones tuvieron exito
 
         String word = params[0];
         Integer hits = new Integer(params[1]);

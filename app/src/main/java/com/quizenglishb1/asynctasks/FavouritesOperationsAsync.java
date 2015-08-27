@@ -31,8 +31,8 @@ public class FavouritesOperationsAsync extends AsyncTask<String,Integer,Void>{
 
     @Override
     protected Void doInBackground(String... params) {
-        //En params[0] estará la palabra, en params[1] la operación a realizar, y en params[2] el token
-        String exito = "FAIL"; //banderín para determinar si las operaciones tuvieron éxito
+        //En params[0] estara la palabra, en params[1] la operacion a realizar, y en params[2] el token
+        String exito = "FAIL"; //banderï¿½n para determinar si las operaciones tuvieron exito
         String word = params[0];
         String operation = params[1];
         String token = params[2];

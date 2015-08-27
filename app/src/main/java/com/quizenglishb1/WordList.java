@@ -20,6 +20,7 @@ import com.quizenglishb1.com.quizenglishb1.utilities.WordStat;
 
 import org.w3c.dom.Text;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -38,7 +39,7 @@ public class WordList extends ActionBarActivity {
 
         //Recojo de la BD Todo lo que necesito
         final WordsDB db = new WordsDB(this);
-        List<Word> allWords = db.getAllEnglishWords();
+        List<Word> allWords = db.getAllEnglishWords(new ArrayList<String>());
         List<Word> favWords = db.getAllFavouritesEn();
         List<WordStat> bestWords = db.getBestWords();
         List<WordStat> worstWords = db.getWorstWords();
@@ -96,7 +97,7 @@ public class WordList extends ActionBarActivity {
             public void onTabChanged(String tabId) {
                 //Toast.makeText(getApplicationContext(), "Click on tab: " + tabId, Toast.LENGTH_SHORT).show();
                 final WordsDB db = new WordsDB(context);
-                List<Word> allWords = db.getAllEnglishWords();
+                List<Word> allWords = db.getAllEnglishWords(new ArrayList<String>());
                 List<Word> favWords = db.getAllFavouritesEn();
                 List<WordStat> bestWords = db.getBestWords();
                 List<WordStat> worstWords = db.getWorstWords();
