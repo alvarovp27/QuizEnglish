@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.quizenglishb1.com.quizenglishb1.utilities.Answer;
 import com.quizenglishb1.com.quizenglishb1.utilities.Randoms;
 import com.quizenglishb1.com.quizenglishb1.utilities.Word;
+import com.quizenglishb1.com.quizenglishb1.utilities.WordStat;
 
 import org.w3c.dom.Text;
 
@@ -37,6 +38,7 @@ public class Play extends ActionBarActivity {
     private TextView count;
 
     private List<String> categories = new ArrayList<>();
+    private String difficulty;
 
     private int wordCount = 0;
     private List<Word> questions = new ArrayList<>();
@@ -70,6 +72,8 @@ public class Play extends ActionBarActivity {
         if(getIntent().getSerializableExtra("categories")!=null)
             categories = (List<String>) getIntent().getSerializableExtra("categories");
 
+        difficulty = getIntent().getStringExtra("difficulty");
+
         //Carga las preguntas
         loadQuestions();
 
@@ -89,7 +93,11 @@ public class Play extends ActionBarActivity {
 
                 answers.add(new Answer(questions.get(wordCount).getMainWord(),wordSpanish.getText().toString(),translations));
 
-                if(questions.get(wordCount).getTranslations().contains(wordSpanish.getText().toString())){
+                List<String> rightAnswers = new ArrayList<String>();
+                for(Word w: questions.get(wordCount).getTranslations())
+                    rightAnswers.add(w.getMainWord());
+
+                if(rightAnswers.contains(wordSpanish.getText().toString())){
                     isCorrect.setText("OK!");
 
                     WordsDB db = new WordsDB(context);
@@ -151,9 +159,16 @@ public class Play extends ActionBarActivity {
 
         final WordsDB db = new WordsDB(this);
         //List<List<String>> allClasified = db.getAllClasified();
-        List<Word> allWords = db.getAllEnglishWords(/*categories*/new ArrayList<String>());
+        List<Word> allWords = new ArrayList<>();
+        if(difficulty.equals("hard")){
+            List<WordStat> allWordStats = db.getWorstWords();
+            for(WordStat ws:allWordStats)
+                allWords.add(ws);
+        }else{
+            //TODO Eliminar la selección por categorías en la sentencia SQL
+            allWords = db.getAllEnglishWords(/*categories*/new ArrayList<String>());
+        }
         db.close();
-
         List<Word> allWordsByCategory = new ArrayList<>();
         if(!categories.isEmpty()) {
             for (Word w : allWords)
@@ -167,8 +182,10 @@ public class Play extends ActionBarActivity {
 
         for(int i = 0;i<total;i++){
             int random = Randoms.randomInt(allWordsByCategory.size()-1);
-            if(!questions.contains(allWordsByCategory.get(random)))
-                questions.add(allWordsByCategory.get(random));
+            while(questions.contains(allWordsByCategory.get(random))){
+                random = Randoms.randomInt(allWordsByCategory.size()-1);
+            }
+            questions.add(allWordsByCategory.get(random));
         }
 
     }

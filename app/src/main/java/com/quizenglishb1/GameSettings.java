@@ -11,6 +11,8 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import java.io.Serializable;
@@ -28,6 +30,10 @@ public class GameSettings extends ActionBarActivity {
 
     private Context context = this;
 
+    private RadioGroup difficulty;
+    private RadioButton normal;
+    private RadioButton hard;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,6 +42,11 @@ public class GameSettings extends ActionBarActivity {
         start = (Button) findViewById(R.id.start_button_settings);
         home = (Button) findViewById(R.id.home_button_settings);
         nQuestionsEdit = (EditText) findViewById(R.id.number_of_questions);
+
+        //difficulty = (RadioGroup) findViewById(R.id.difficulty);
+        normal = (RadioButton) findViewById(R.id.normal);
+        hard = (RadioButton) findViewById(R.id.hard);
+        normal.setChecked(true);
 
         final LinearLayout checkBoxList = (LinearLayout) findViewById(R.id.checkList);
         //checkBoxList.setVerticalScrollBarEnabled(true);
@@ -63,6 +74,10 @@ public class GameSettings extends ActionBarActivity {
             public void onClick(View v) {
                 Intent i = new Intent(context, Play.class);
 
+                String difficultyStr = "normal";
+                if(hard.isChecked())
+                    difficultyStr = "hard";
+
                 List<String> categories = new ArrayList<String>();
                 for(CheckBox cb:checkBoxes)
                     if(cb.isChecked())
@@ -80,6 +95,7 @@ public class GameSettings extends ActionBarActivity {
                     if(nQuestions > 50)
                         Toast.makeText(context, "The number of questions must be less than 50", Toast.LENGTH_SHORT).show();
                     else{
+                        i.putExtra("difficulty",difficultyStr);
                         i.putExtra("nQuestions",nQuestions);
                         i.putExtra("token",getIntent().getStringExtra("token"));
                         i.putExtra("categories", (Serializable) categories);

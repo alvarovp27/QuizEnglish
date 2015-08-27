@@ -74,11 +74,45 @@
         </LinearLayout>
     </ScrollView>
 
+    <RelativeLayout
+        android:id="@+id/difficulty"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/checkListScroll">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/difficulty_info"
+            android:text="Select the difficulty"/>
+
+        <RadioGroup
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_below="@id/difficulty_info">
+
+            <RadioButton
+                android:id="@+id/normal"
+                android:text="Easy"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                />
+
+            <RadioButton
+                android:id="@+id/hard"
+                android:text="Hard"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"/>
+
+        </RadioGroup>
+
+    </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/checkListScroll">
+        android:layout_below="@id/difficulty">
         <Button
             android:id="@+id/home_button_settings"
             android:layout_width="100dp"
